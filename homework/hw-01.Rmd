@@ -1,0 +1,18 @@
+---
+title: "Homework 1"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Part I: Getting started
+
+In order to configure your machine to run both R and Python, you'll need to do the following steps:
+
+1. Download and install R (or update if you already have it)
+2. Download and install RStudio (or update if you already have it)
+3. Download and install the `reticulate` package.
+4. If it doesn't prompt you to install miniconda, run `reticulate::install_miniconda()`.
+
