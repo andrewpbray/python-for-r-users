@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Week 1: A Peek Into Python</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="STAT 198/298 Fall 2020" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link rel="stylesheet" href="cal.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Week 1: A Peek Into Python
+## reticulate, basic syntax and semantics
+### STAT 198/298 Fall 2020
+
+---
+
+
+
+
+# Something to start things off
+
+In a brower on your laptop or phone, go to slido.com and enter event code #Z837.
+
+&gt; **Poll**: Describe your first week of classes in one word.
+
+--
+* * *
+
+## Slido
+
+- Polls
+- Q &amp; A (with upvotes)
+
+
+---
+# By the end of this course you will...
+
+--
+
+- Use Python to conduct the full data science life cycle on a simple project, including data import, wrangling, visualization, and modeling.
+
+--
+
+- Have a sense of the software ecosystem involving R and Python.
+
+--
+
+- Be able to describe the relative strengths of Python and R.
+
+--
+
+- Understand more about the structure of R.
+
+
+---
+# Disclaimer
+
+--
+
+I am not a Python expert. I'm an R User that's (re-)learning Python.
+
+
+---
+# Course Structure
+
+## Course website
+
+- `www.github.com/andrewpbray/python-for-r-users`
+
+## Course communication
+
+- `www.piazza.com/`
+
+## Assignments
+
+- Submitted and graded on `www.gradescope.com`
+
+---
+# Lecture Style
+
+- Slides + live coding
+
+--
+
+- Feel free to play along, but don't get tunnel vision
+
+--
+
+- If you encounter an issue / error, please ask over Slido.
+
+
+---
+# Accessing and installing Python
+
+## How will we access Python?
+
+--
+
+We'll start off using `{reticulate}`, an R package.
+
+--
+
+## Which installation will we use?
+
+--
+
+`miniconda`, a lightweight installation that includes Python and conda, a package management system.
+
+--
+
+&gt; **Poll**: Were you able to install `reticulate` and `miniconda`?
+
+---
+# An expanded ecosystem
+
+## Where does `{reticulate}` fit in?
+
+--
+
+&lt;img src="figs/r-python-diagram.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+--
+
+`{reticulate}` is an R package that starts a Python session within your R session.
+
+---
+# Alternatives to {reticulate}
+
+1. Running `python` at the terminal
+
+--
+
+2. Running `ipython` at the terminal
+
+--
+
+3. Running `python` within a Jupyter notebook
+
+
+---
+# Python as a calculator
+
+--
+
+&lt;img src="figs/math-operators.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+# Python basics: syntax
+
+## How do you assign objects?
+- 
+
+
+## How do you print?
+- 
+
+
+## How do you comment?
+- 
+
+
+## How does whitespace work?
+- 
+
+
+---
+# Whitespace
+
+&gt; **Poll:** Which of the following will throw an error?
+
+
+```r
+# A
+a = 1 + 3
+
+# B
+a         = 1 +       3
+
+# C
+if(a &gt; 2)             {
+         
+      "so big!"
+}
+
+# D
+if(a &gt; 2) {
+  "so big!"
+}
+```
+
+---
+# Python basics: syntax
+
+## How do you assign objects?
+- Assign with `=`
+
+## How do you print?
+- `print()` or type name of object
+
+## How do you comment?
+- Comments marked by `#`
+
+## How does whitespace matter?
+- Yes (indentation) and no (midline)
+
+
+---
+# Python basics: semantics
+
+--
+
+## What are variables?
+
+- 
+- 
+
+## What are objects?
+
+- 
+
+---
+# Python basics: semantics
+
+## What are variables?
+
+- Variables do not need to be declared
+- Variables are *pointers* -&gt; functions can change their arguments.
+
+## What are objects?
+
+- 
+
+
+---
+# John Chambers on S (2008)
+
+&gt; The central computation in R is a function call, defined by the function object itself and the objects that are supplied as the arguments. In the functional programming model, the result is defined by another object, the value of the call. Hence the traditional motto of the S language: **everything is an object**—the arguments, the value, and in fact the function and the call itself: All of these are defined as objects. Think of objects as collections of data of all kinds. The data contained and the way the data is organized depend on the class from which the object was generated.
+
+---
+# Python basics: semantics
+
+## What are variables?
+
+- Variables do not need to be declared
+- Variables are *pointers* -&gt; functions can change their arguments.
+
+## What are objects?
+
+- Everything is an object: data with *attributes* and *methods*
+
+
+---
+# A note about {reticulate}
+
+
+---
+
+&lt;img src="figs/mic-drop.gif" style="display: block; margin: auto;" /&gt;
+
+
+---
+# A note about {reticulate}
+
+`{reticulate}` can pass objects between your Python and R session.
+
+- Python object `b` can be accessed in R using py$b
+- R object `a` can be accessed in Python using r.a
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "atelier-forest-light",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
