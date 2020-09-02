@@ -8,7 +8,7 @@ a goal for something that you will be able to re-implement in Python by
 the end of the semester. The main guideline is that your analysis
 touches on as many of the steps of the data science cycle as possible.
 
-<img src="figs/r4ds-ds-cycle.png" width="517" />
+<img src="figs/r4ds-ds-cycle.png" width="517" style="display: block; margin: auto;" />
 
 Some further guidelines:
 
@@ -29,7 +29,9 @@ Some further guidelines:
     comments or markdown) to demarcate which step of the data science
     cycle that span of code represents.
 5.  In terms of sophistication of the data analysis, you should be
-    shooting for moderate. If could be fine to use an analysis that fits
+    shooting for moderate. It could be fine to use an analysis that fits
     a very sophisticated statistical model, but know that that may be a
     component that you may need to leave in R (and pass objects to
     Python using reticulate).
+
+This data analysis will be due as a pdf to gradescope by Sunday at 8 pm.
