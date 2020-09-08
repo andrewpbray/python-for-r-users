@@ -1,0 +1,245 @@
+---
+title: "Week 2"
+subtitle: "operators, types, and data structures"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+# Operators
+
+```{r}
+a <- a + 1
+`+`(a, 1)
+`<-`(a,)
+```
+
+
+## Update
+
+```{python}
+a = 2
+b = 3
+
+# addition
+a += b
+
+# subtraction
+a -= b
+
+# multiplication
+a *= b
+
+# division
+a /= b
+```
+
+## Comparison
+
+```{python}
+2 < 3
+2 <- 3
+(2 <- 3) == False
+"lo" < "hi
+"lo" == "hi"
+"lo" != "hi"
+```
+
+## Boolean
+
+```{python}
+# and
+x = 4
+(x < 6) and (x > 2)
+
+# boolean algebra
+True and True
+True and False
+False and False
+
+# and is like * of 1 and 0
+1 * 1
+1 * 0
+0 * 0
+```
+
+```{python}
+# or
+(x < 6) or (x > 2)
+(x < 6) or (x == 2)
+
+# or is like + of 1 and 0
+1 + 1
+min(1 + 1, 1)
+1 + 0
+0 + 0
+```
+
+```{python}
+(x < 6) | (x > 2)
+```
+
+# Sets
+
+```{python}
+# equality
+a = [1, 2]
+b = [1, 2]
+a == b
+a is b
+```
+
+```{python}
+# identity
+a = [1, 2]
+b = a
+a == b
+a is b
+```
+
+
+# Types
+
+## Integers
+
+```{python}
+a = 3
+type(a)
+
+# An operation on objects of type integer can yield a non-integer.
+3 / 2
+```
+
+## Floats
+
+```{python}
+# anything with a decimal or in exponential notation
+type(3.2)
+type(1e6)
+
+# remember floats can only ever be so precise
+.1 + .2 == .3
+.1 + .2 < .3
+.1 + .2 > .3
+
+# don't check for exact equality with floats.
+import math
+math.isclose(.1 + .2, .3)
+```
+
+## Strings
+
+# POLL
+
+```{python}
+# creating strings
+type("hello")
+type('hello')
+
+# some unexpected behavior
+a = "hello"
+b = " world"
+a + b
+a - b
+a * b
+a * 5
+a / b
+a[2]
+```
+
+
+# Data Structures
+
+## Lists
+
+```{python}
+# Create with brackets
+a = [1, 3, 5]
+type(a)
+
+# Lists are mutable
+a.append(2)
+a
+a + 2
+a + [2]
+a.sort()
+a
+```
+
+```{python}
+# so what R data structure does this most resemble? a vector?
+a = [1, "hello", 3.2]
+type(a)
+a = [1, ["hello", " world"]]
+type(a)
+# a list!
+```
+
+```{python}
+# indexing starts at 0
+a = [1, 4, 7, 6]
+a[1]
+a[0]
+a[3]
+
+# negative counts backwards
+a[-2]
+```
+
+```{python}
+# slicing
+a[1:2] # works between elements
+a[:2] # assumes 0
+a[::2] # skips by 2 and assumes 0 and len(a)
+a[::-1] # takes negative steps
+
+# setting elements
+a[0] = 9
+a
+```
+
+## Tuples
+
+```{python}
+# creating tuples
+t = (1, 2, 3)
+type(t)
+t2 = 1, 2, 3
+t == t2
+
+# they are immutable
+t.append(4)
+t[0] = 0
+```
+
+## Sets
+
+```{python}
+# created with {}
+s1 = {1, 3, 5}
+s2 = {1, 2}
+
+# unordered
+s1[0]
+
+# support set operations
+s1 | s2
+s1 & s2
+s1 - s2
+s1 ^ s2
+```
+
+## Dictionaries
+
+```{python}
+# created with {} and keys
+d = {"one":1, "two":2, "three":3}
+type(d)
+
+# indexed by key
+d["two"]
+d["two"] = 22 # mutable
+d["two"] = "hello"
+```
+
+
