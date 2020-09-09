@@ -275,7 +275,7 @@ The most basic form of how a piece of data can be stored.
 
 --
 
-- *Strings* allow some arithmetic operations and direct indexing.
+- *Strings* allow some arithmetic operations, direct indexing.
 
 ---
 # Data Structures
@@ -289,10 +289,16 @@ Data structures are *compound types* that act as containers for simple types. Th
 - Dictionary
 - Set
 
-Keep an eye out: data structures are denoted by different types of brackets.
+--
+
+When working with a data structure, ask:
+
+1. Is it ordered? (index by integer)
+2. Is it heterogenous? (different types)
+3. Is it mutable? (change elements)
 
 ---
-# code
+# Code
 
 ---
 # List indexing

@@ -148,68 +148,67 @@ a[2]
 ```
 
 
+
 # Data Structures
 
 ## Lists
 
 ```{python}
 # Create with brackets
-a = [1, 3, 5]
+a = [2, 3, 5, 7, 11]
 type(a)
 
-# Lists are mutable
-a.append(2)
-a
-a + 2
-a + [2]
-a.sort()
-a
-```
+# Ordered? Yes
+a[1]
+a[0]   # uses zero-based indexing
+a[-1]  # counts backwards
+a[0:1] # use : for slicing
+a[:2]  # omitting before implies 0
+a[:]    # omitting after implies len(a)
+a[::2]
 
-```{python}
-# so what R data structure does this most resemble? a vector?
+# Mutable? Yes
+a.append(1)
+a.sort()
+a[0] = 99
+
+# note: you can also concatenate two lists
+a + [1] # not a mutation since a is unchanged
+
+# what R data structure does this most resemble? a vector?
+# Type heterogeneous? Yes
 a = [1, "hello", 3.2]
 type(a)
-a = [1, ["hello", " world"]]
+a = [1, ["hello", " world"]] # can also be nested
 type(a)
+
 # a list!
-```
-
-```{python}
-# indexing starts at 0
-a = [1, 4, 7, 6]
-a[1]
-a[0]
-a[3]
-
-# negative counts backwards
-a[-2]
-```
-
-```{python}
-# slicing
-a[1:2] # works between elements
-a[:2] # assumes 0
-a[::2] # skips by 2 and assumes 0 and len(a)
-a[::-1] # takes negative steps
-
-# setting elements
-a[0] = 9
-a
 ```
 
 ## Tuples
 
 ```{python}
-# creating tuples
+# Create with parens
 t = (1, 2, 3)
 type(t)
 t2 = 1, 2, 3
 t == t2
 
-# they are immutable
+# Ordered? Yes
+t[0:1]
+
+# notes: nestable
+t3 = (1, 2, (4, 5))
+type(t3[2])
+type(t3[3])
+
+# Mutable? No
 t.append(4)
 t[0] = 0
+
+# Type heterogeneous? Yes
+t = (1, 2, 3, "hello")
+type(t)
 ```
 
 ## Sets
@@ -218,16 +217,28 @@ t[0] = 0
 # created with {}
 s1 = {1, 3, 5}
 s2 = {1, 2}
+type(s1)
+type(s2)
 
-# unordered
+# Ordered? No
 s1[0]
 
-# support set operations
+# Mutable? Yes
+s1.append(s2)
+s1.add(5)
+
+# note: support set operations
 s1 | s2
 s1 & s2
 s1 - s2
 s1 ^ s2
+s3 = {1, 3, {1, 3, 5}} # but not nestable
+
+# Type heterogeneous? Yes
+s1 = {1, 3, "hello"}
+type(s1)
 ```
+
 
 ## Dictionaries
 
@@ -236,9 +247,17 @@ s1 ^ s2
 d = {"one":1, "two":2, "three":3}
 type(d)
 
-# indexed by key
+# Ordered? No, but still indexed by key
 d["two"]
-d["two"] = 22 # mutable
+
+# Mutable? Yes
+d["two"] = 22
+
+# note: can be nested
+d2 = {"one":1, "two":2, "three":{"four":4, "five":5}}
+type(d2)
+
+# Type heterogeneous? Yes
 d["two"] = "hello"
 ```
 
