@@ -1,16 +1,19 @@
 ---
 title: "Homework 2"
 output: github_document
+#geometry: margin=1.5in
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, eval = FALSE)
 ```
 
-```{r eval = TRUE, out.width = "40%", fig.align="center"}
+```{r eval = TRUE, out.width = "10%", fig.align="center"}
 knitr::include_graphics("figs/elements-as-types.png")
 ```
-
+  
+  
+  \vspace{5mm}
 This homework will provide some practice with aspects of Python's types and data structures. Give each of these an earnest try in your Rmd before turning to stack overflow. You're also encouraged to post your question to Piazza - collaboration there on homeworks and labs is encouraged, including sharing approaches to solving questions. If you do use an external resource, be sure to cite it (include the url).
 
 ## Types
