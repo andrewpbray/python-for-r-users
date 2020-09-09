@@ -7,7 +7,7 @@ output: github_document
 knitr::opts_chunk$set(echo = FALSE, eval = FALSE)
 ```
 
-# Part I: Getting started
+## Getting started
 
 In order to configure your machine to run both R and Python, you'll need to do the following steps:
 
@@ -15,3 +15,5 @@ In order to configure your machine to run both R and Python, you'll need to do t
 2. Download and install RStudio (or update if you already have it)
 3. Download and install the `reticulate` package.
 4. If it doesn't prompt you to install miniconda, run `reticulate::install_miniconda()`.
+
+If you have issues running Python commands from an Rmarkdown file, please come by office hours or get in touch with me.
