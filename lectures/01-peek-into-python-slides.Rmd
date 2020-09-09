@@ -20,7 +20,7 @@ library(tidyverse)
 
 # Something to start things off
 
-In a brower on your laptop or phone, go to slido.com and enter event code #Z837.
+In a browser on your laptop or phone, go to slido.com and enter event code #Z837.
 
 > **Poll**: Describe your first week of classes in one word.
 
