@@ -33,7 +33,7 @@ Types or simple types are the primary forms that a single object in Python can t
     1. `"w"`
     1. `"olleh"`
 
-1. We saw that in Python it is possible to concatenate and replicate strings using arithmetic operators. Do the update operators also work on strings? Try it.
+1. We saw that in Python it is possible to concatenate and replicate strings using arithmetic operators. Do the update assignment operators also work on strings? Try it.
 
 1. See Piazza for the note related to string comparison in Python.
 
