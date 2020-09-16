@@ -34,7 +34,7 @@ ggplot() +
 
 1. Consider the following function:
 
-    ```{python}
+    ```{python, echo = TRUE}
     x = 1
     def f(y):
         global x
