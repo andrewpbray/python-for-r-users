@@ -58,7 +58,7 @@ ggplot() +
 
     The reason is that `x * n` is evaluated first, which smushes the repeated strings together to form a single scalar string. With only one string there (albeit one with repetitions inside it), `print()` has nothing to glue together with a `.`.
 
-    You can fix this behavior by being sure that each repeated string remains a separate element before getting passed to `print()` and that print recognizes each of those elements to be separate.  You can get there by incorporating two realizations:
+    You can fix this behavior by being sure that each repeated string remains a separate element before getting passed to `print()` and that print recognizes each of those elements to be separate.  You can get there by incorporating two ideas:
 
     - As we've seen, you can use `*` and `+` operators with string types to repeat and concatenate them. They can also be used on list types with a similar functionality. The list type is one way to preserve the separation between the repeated strings.
     - The `*` character can also be used before a variable passed to a function (this character keeps very busy in Python!). This can be read to mean, "expand this as a sequence" (see p. 43 in *Whirlwind*). If you look in `?print`, this allows you to pass a compound data structure not as a single `value`, but as multiple values that take advantage of the `...`.
@@ -73,7 +73,7 @@ ggplot() +
     l = ["my", "it's", "smokey", "out"]
     ```
 
-    1. Query two attributes of this string that are of interest to you.
+    1. Query two attributes of this list that are of interest to you.
     1. Use the `.append()` list method to add the string `"today"` to this list.
     1. Use list comprehension (see Lab 2) and string methods to capitalize each of the words in this list.
     1. Construct one addition list comprehension that uses a string method of your choice and asserts a logical condition for the operation using the `if` keyword.
