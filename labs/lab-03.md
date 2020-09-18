@@ -30,12 +30,13 @@ canvas to draw pictures using its methods.
 Before you start drawing with your turtle, consider that last command
 that you ran; the dot syntax here is illuminating. It suggests that
 `turtle` is an object of a particular class and that `Turtle` is one of
-it’s methods.
+its methods.
 
 1.  What class is the object `turtle`? You can find out either with the
     `type()` function or the `__class__` attribute of that object.
 
-2.  Name three more methods available to objects of class `turtle`.
+2.  Name three methods besides `.Turtle()` that are available to
+    `turtle`.
 
 This returns us to the notion that “Everything is an object”, including
 the package / module `turtle` that we just imported, and to the practice
