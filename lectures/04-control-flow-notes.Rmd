@@ -1,0 +1,86 @@
+---
+title: "Week 4"
+subtitle: "control flow"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# What is an R data frame?
+
+```{r}
+mtcars
+typeof(mtcars)
+```
+
+## It's a list!
+
+```{r}
+l <- list("hello", pi)
+l
+length(l)
+l[[2]]
+l <- list("hello", c(pi, 3))
+l
+l[[2]][2]
+l <- list("hello", c(pi, 3), matrix(1:4, nrow = 2))
+typeof(l[[1]])
+typeof(l[[2]])
+typeof(l[[3]])
+l <- list("greeting" = "hello", 
+          "numbers"  = c(pi, 3), 
+          "matrix"   = matrix(1:4, nrow = 2))
+typeof(l)
+l[[1]]
+l$greeting
+names(l)
+l <- list("greeting" = "hello", 
+          "numbers"  = c(pi, 3), 
+          "matrix"   = matrix(1:4, nrow = 2),
+          "list"     = list("world", 2))
+```
+
+Can I turn a list into a data frame?
+
+```{r}
+as.data.frame(l)
+```
+
+
+## It's a data frame!
+
+```{r}
+class(mtcars)
+?print.data.frame()
+print(mtcars, row.names = FALSE)
+mtcars
+mtcars[1, 3]
+mtcars[1, "cyl"]
+mtcars["Volvo 142E", "cyl"]
+```
+
+
+## What is a tibble?
+
+```{r}
+library(tidyverse)
+mtcars_tbl <- as_tibble(mtcars)
+mtcars
+mtcars2 <- data.frame(mtcars, names = row.names(mtcars))
+as_tibble(mtcars2)
+as_tibble(mtcars, rownames = "names")
+```
+
+
+## Review: so what's a ggplot?
+
+```{r}
+p1 <- ggplot(mtcars, aes(x = hp, y = mpg)) +
+  geom_point()
+print.default(p1)
+```
+
+It's a list.
+

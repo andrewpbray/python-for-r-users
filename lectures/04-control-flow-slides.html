@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Week 4</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="STAT 198/298 Fall 2020" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link rel="stylesheet" href="cal.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Week 4
+## control flow
+### STAT 198/298 Fall 2020
+
+---
+
+
+
+
+# Send your phone here
+
+&lt;img src="figs/slido-qr.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+Or send a browser to `slido.com`, event `#Z837`.
+
+---
+# Poll:
+
+If two objects are identical, that means...
+
+---
+
+# Review
+
+- Making nice HW
+- What is a DF
+- What is a list (print method)
+- Textbook overview
+- Change in course format
+- ifelse
+- for
+- list comprehension
+- generators
+
+
+
+---
+# Writing Code, Writing English
+
+&lt;img src="figs/lab-3-sc1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Markdown vs Comments
+
+&lt;img src="figs/lab-3-sc2.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+---
+`CODE`
+
+---
+# Assignment tips
+
+- Use `output: pdf_document`
+- Suppress unneeded output with chunk options
+    - `message = FALSE`: suppress package loading messages
+    - `warning = FALSE`: suppress warnings
+    - `echo = FALSE`: suppress your code showing up
+    - `eval = FALSE`: suppress your output showing up
+- Answers questions in full / thoughtful sentences
+- Scan your pdf before you submit to be sure it looks right
+
+
+---
+# POLL: What is a dataframe?
+
+---
+# What is a dataframe?
+
+`CODE`
+
+
+---
+# What is a dataframe?
+
+... it's a list!
+
+A compound data structure that
+
+- is *type heterogeneous*
+- can contain elements of different sizes
+- is subsetted using `[[]]`
+- can also use key:value pairings (named elements)
+- can be index with `$`
+- can be nested
+
+--
+
+Whole smokes, lists are VERY flexible.
+
+*What's the difference between an R list and a Python dictionary?*
+
+---
+# R list vs Python Dictionary
+
+Unlike the R dataframe, the Python dictionary:
+
+- is unordered; can't index by position
+- every element must be named
+
+R dataframes combine elements of the Python list (index by position) and the Python dictionary (index by key)
+
+---
+`CODE`
+
+---
+# What is a dataframe?
+
+... it's a dataframe!
+
+- a list with elements that are vectors of equal length
+- has specific methods
+- can add `row.names`
+- can be subsetted like a matrix `[row, column]` with subsetting done by index or name
+
+--
+
+... so what's a tibble?
+
+---
+`CODE`
+
+---
+# What is a tibble?
+
+... it's an "opinionated dataframe" for the `tidyverse`.
+
+- a dataframe with a refined print method
+    - shows `dim()` and `typeof()`
+    - limits number of rows printed
+- doesn't change characters to factors
+- can be created by coersion or by passing through `dplyr`
+
+---
+# So what's a ggplot?
+
+
+```r
+p1 &lt;- ggplot(mtcars, aes(x = hp, y = mpg)) +
+  geom_point()
+```
+
+`CODE`
+
+---
+# Control Flow in Python
+
+
+--
+
+&lt;img src="figs/bonneville.jpg" width="35%" style="display: block; margin: auto;" /&gt;
+
+Elements of a script that redirect the flow of running commands
+
+- If - then
+- For loops
+- While loops, etc.
+
+
+---
+# if
+
+--
+
+
+```python
+if &lt;condition&gt;:
+    &lt;expression&gt;
+```
+
+--
+
+- keyword: `if`
+- condition can be single or compound
+- use the `:` to start expression
+- expression can be multi-line but be sure to indent
+
+---
+# if example
+
+### Example 1
+
+What do you think will happen when this is run?
+
+
+```python
+x = 15
+if x == 0:
+    print(x, "is zero.")
+```
+
+--
+
+
+
+Nothing! (well, we now have a new object `x = 15`)
+
+--
+
+### Example 2
+
+
+```python
+x = 0
+if x == 0:
+    print(x, "is zero.")
+```
+
+--
+
+
+```
+## 0 is zero.
+```
+
+
+---
+# else
+
+### Example 3
+
+
+```python
+x = 15
+if x == 0:
+    print(x, "is zero.")
+else:
+    print(x, "is non-zero.")
+```
+
+--
+
+
+```
+## 15 is non-zero.
+```
+
+---
+# elif
+
+### Example 4
+
+
+```python
+x = 15
+if x == 0:
+    print(x, "is zero.")
+elif x &gt; 0:
+    print(x, "is positive.")
+elif x &lt; 0:
+    print(x, "is negative")
+else:
+    print(x, "confuses me.")
+```
+
+--
+
+
+```
+## 15 is positive.
+```
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "atelier-forest-light",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
