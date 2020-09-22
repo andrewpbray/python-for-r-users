@@ -30,7 +30,7 @@ ggplot() +
 
 ## Functions
 
-1. The [Laplace Distribution](https://en.wikipedia.org/wiki/Laplace_distribution) is a continuous probability distribution with a shape that's determined by a center parameter $\mu$ and a spread parameter $b$. Write a function that returns the probability density of the Laplace distribution evaluated at some real number value `x` and call the function `lap_pdf`. Allow the user to pass two optional arguments specifying the parameters of the distribution that are otherwise set to default values of 0 and 1 respectively. Test out your function at a view values of `x` and a couple parameter values to test if it's working the way you expect it to.
+1. The [Laplace Distribution](https://en.wikipedia.org/wiki/Laplace_distribution) is a continuous probability distribution with a shape that's determined by a center parameter $\mu$ and a spread parameter $b$. Write a function that returns the probability density of the Laplace distribution evaluated at some real number value `x` and call the function `lap_pdf`. Allow the user to pass two optional arguments specifying the parameters of the distribution that are otherwise set to default values of 0 and 1 respectively. Test out your function at a few values of `x` and a couple parameter values to test if it's working the way you expect it to.
 
 1. Consider the following function:
 

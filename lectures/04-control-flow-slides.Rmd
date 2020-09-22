@@ -28,25 +28,13 @@ knitr::include_graphics("figs/slido-qr.png")
 Or send a browser to `slido.com`, event `#Z837`.
 
 ---
-# Poll:
+# Agenda
 
-If two objects are identical, that means...
-
----
-
-# Review
-
-- Making nice HW
-- What is a DF
-- What is a list (print method)
-- Textbook overview
-- Change in course format
-- ifelse
-- for
-- list comprehension
-- generators
-
-
+1. Tips for assignments
+2. Control Flow
+    - if - else
+    - for loops
+3. What is a dataframe?
 
 ---
 # Writing Code, Writing English
@@ -79,86 +67,6 @@ knitr::include_graphics("figs/lab-3-sc2.png")
 - Answers questions in full / thoughtful sentences
 - Scan your pdf before you submit to be sure it looks right
 
-
----
-# POLL: What is a dataframe?
-
----
-# What is a dataframe?
-
-`CODE`
-
-
----
-# What is a dataframe?
-
-... it's a list!
-
-A compound data structure that
-
-- is *type heterogeneous*
-- can contain elements of different sizes
-- is subsetted using `[[]]`
-- can also use key:value pairings (named elements)
-- can be index with `$`
-- can be nested
-
---
-
-Whole smokes, lists are VERY flexible.
-
-*What's the difference between an R list and a Python dictionary?*
-
----
-# R list vs Python Dictionary
-
-Unlike the R dataframe, the Python dictionary:
-
-- is unordered; can't index by position
-- every element must be named
-
-R dataframes combine elements of the Python list (index by position) and the Python dictionary (index by key)
-
----
-`CODE`
-
----
-# What is a dataframe?
-
-... it's a dataframe!
-
-- a list with elements that are vectors of equal length
-- has specific methods
-- can add `row.names`
-- can be subsetted like a matrix `[row, column]` with subsetting done by index or name
-
---
-
-... so what's a tibble?
-
----
-`CODE`
-
----
-# What is a tibble?
-
-... it's an "opinionated dataframe" for the `tidyverse`.
-
-- a dataframe with a refined print method
-    - shows `dim()` and `typeof()`
-    - limits number of rows printed
-- doesn't change characters to factors
-- can be created by coersion or by passing through `dplyr`
-
----
-# So what's a ggplot?
-
-```{r}
-p1 <- ggplot(mtcars, aes(x = hp, y = mpg)) +
-  geom_point()
-```
-
-`CODE`
 
 ---
 # Control Flow in Python
@@ -313,9 +221,145 @@ for <variable> in <iterator>:
 
 ### Example 1
 
+What do you think will happen when this is run?
+
 ```{python eval = FALSE}
 for i in range(10):
     print(i, end = " ")
-
 ```
+
+--
+
+```{python echo = FALSE}
+for i in range(10):
+    print(i, end = " ")
+```
+
+
+---
+# for loop example
+
+### Example 2
+
+```{python eval = FALSE}
+l = [1, 3, 99]
+for i in range(3):
+    print(l[i], end = " ")
+```
+
+--
+
+```{python echo = FALSE}
+l = [1, 3, 99]
+for i in range(3):
+    print(l[i], end = " ")
+```
+
+--
+
+### Example 3
+
+```{python eval = FALSE}
+for i in [1, 3, 99]:
+    print(i, end = " ")
+```
+
+--
+
+```{python echo = FALSE}
+for i in [1, 3, 99]:
+    print(i, end = " ")
+```
+
+--
+
+- Loop on value or index - which is better?
+
+---
+`CODE`
+
+---
+# Iterators
+
+Python has a class of objects called *iterators* that behave like a list in terms of iteration but never actually create the full list.
+
+---
+# POLL: What is a dataframe?
+
+---
+# What is a dataframe?
+
+`CODE`
+
+
+---
+# What is a dataframe?
+
+... it's a list!
+
+A compound data structure that
+
+- is *type heterogeneous*
+- can contain elements of different sizes
+- is subsetted using `[[]]`
+- can also use key:value pairings (named elements)
+- can be index with `$`
+- can be nested
+
+--
+
+Whole smokes, lists are VERY flexible.
+
+*What's the difference between an R list and a Python dictionary?*
+
+---
+# R list vs Python Dictionary
+
+Unlike the R dataframe, the Python dictionary:
+
+- is unordered; can't index by position
+- every element must be named
+
+R dataframes combine elements of the Python list (index by position) and the Python dictionary (index by key)
+
+---
+`CODE`
+
+---
+# What is a dataframe?
+
+... it's a dataframe!
+
+- a list with elements (vectors/lists) of equal length
+- has specific methods
+- can add `row.names`
+- can be subsetted like a matrix `[row, column]` with indexing done by position or name
+
+--
+
+... so what's a tibble?
+
+---
+`CODE`
+
+---
+# What is a tibble?
+
+... it's an "opinionated dataframe" for the `tidyverse`.
+
+- a dataframe with a refined print method
+    - shows `dim()` and `typeof()`
+    - limits number of rows printed
+- doesn't change characters to factors
+- can be created by coersion or by passing through `dplyr`
+
+---
+# So what's a ggplot?
+
+```{r}
+p1 <- ggplot(mtcars, aes(x = hp, y = mpg)) +
+  geom_point()
+```
+
+`CODE`
 

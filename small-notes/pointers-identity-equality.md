@@ -1,0 +1,152 @@
+Pointers, Equality, and Identity
+================
+
+## Pointers in R
+
+Let’s start by creating a vector of the integers 1 to 10 in R.
+
+``` r
+x <- 1:10
+x
+```
+
+    ##  [1]  1  2  3  4  5  6  7  8  9 10
+
+We can ask for the location of this object in memory using `obj_addr()`.
+
+``` r
+library(lobstr)
+obj_addr(x)
+```
+
+    ## [1] "0x7fcd27330420"
+
+Let’s point another variable `y` at `x` and see where it is stored.
+
+``` r
+y <- x
+obj_addr(y)
+```
+
+    ## [1] "0x7fcd27330420"
+
+We can see that’s they’re actually pointing to the same object. This is
+a sensible thing to do to save memory - why copy over something that’s
+the same?
+
+Let’s see what happens if we if we change `x` in place:
+
+``` r
+x[1] <- 99
+obj_addrs(list(x, y))
+```
+
+    ## [1] "0x7fcd10b96388" "0x7fcd27330420"
+
+We see that while `y` is still pointing to the original object, R has
+copied over the contents of `x` into a new location, then made the
+change. This behavior is helpful if you want to be sure to not
+inadvertently overwrite objects, but it does make me wonder why we call
+that syntax “change in place”\! Perhaps “change in object” would be
+better.
+
+## Pointers in Python
+
+Let’s go through the same process with Python.
+
+``` python
+x = list(range(1, 11))
+x
+```
+
+    ## [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+``` python
+y = x
+[id(x), id(y)]
+```
+
+    ## [140518311388936, 140518311388936]
+
+So far they’re behaving the same way: both `x` and `y` are pointing to
+the same object in memory. Let’s see what happens when we change `x`.
+
+``` python
+x[0] = 99
+[id(x), id(y)]
+```
+
+    ## [140518311388936, 140518311388936]
+
+*That’s* different. Python truly does change `x` in place; it maintains
+the object’s location in memory so that anything else also pointed to
+that memory slot is also changed.
+
+## Equality and Identity
+
+Two objects are *equal* if they share the same value. Two objects are
+*identical* if they’re actually the same object in memory. In Python,
+`x` and `y` are both identical and equal.
+
+``` python
+x is y # identical
+```
+
+    ## True
+
+``` python
+x == y # equal
+```
+
+    ## True
+
+We can create a third variable `z`, that’s equal,
+
+``` python
+z = [99, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+z == x
+```
+
+    ## True
+
+But because it’s not referring to the same object in memory, it’s not
+identical.
+
+``` python
+[id(z), id(x)]
+```
+
+    ## [140518311389384, 140518311388936]
+
+``` python
+z is x
+```
+
+    ## False
+
+In R, `x` and `y` were both equal and identical initially, but when we
+changed `x`, we broke both the equality and the identity.
+
+``` r
+x == y # not equal
+```
+
+    ##  [1] FALSE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+
+``` r
+obj_addr(x) == obj_addr(y) # not identical
+```
+
+    ## [1] FALSE
+
+Note that there is a function called `identical()` in R that isn’t using
+the same definition of *identical* that we’re using here. Instead of
+outputting a vector of `TRUE` and `FALSE` for each pairwise logical
+comparison that we’re making between `x` and `y`, it only returns `TRUE`
+if all values are `TRUE` and `FALSE` otherwise
+
+``` r
+identical(x, y)
+```
+
+    ## [1] FALSE

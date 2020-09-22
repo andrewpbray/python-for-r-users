@@ -16,3 +16,11 @@
   padding: 1em 3em 1em 3em;
 }
 
+
+.remark-code {
+  font-size: 23px
+}
+
+.remark-inline-code {
+  font-size: 30px
+}

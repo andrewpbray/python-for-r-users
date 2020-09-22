@@ -8,6 +8,26 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Iterators
+
+```{python}
+for i in range(10):
+    print(i, end = " ")
+    
+range(10)
+type(range(10))
+list(range(10))
+```
+
+```{python}
+N = 10 ** 12
+for i in range(N):
+    if i >= 10: break
+    print(i, end = ", ")
+```
+
+
+
 # What is an R data frame?
 
 ```{r}
