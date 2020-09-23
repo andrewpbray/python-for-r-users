@@ -30,26 +30,22 @@ highly catered to getting you help fast and efficiently from classmates
 and myself. Rather than emailing questions to the me, I encourage you to
 post your questions on Piazza.
 
-\*Find our class page at:
-<https://piazza.com/berkeley/fall2020/stat198298/home>
-
 ### Grading
 
 This is a 1 unit Credit/No Credit class. Your assessment is based on two
 items:
 
-**Homework (33%)**: Simple practice assignments that serve to cement
-your familiarity with the basic aspects of coding in Python. There will
-be a homework following each lecture and they will generally be due on
-gradescope by 8pm Wednesday. These will be graded on a credit/no credit
+**Homework**: Simple practice assignments that serve to cement your
+familiarity with the basic aspects of coding in Python. There will be a
+homework following each lecture and they will generally be due on
+gradescope at 8 pm on Friday. These will be graded on a credit/no credit
 basis.
 
-**Lab (67%)**: More involved analyses due on gradescope 8pm Sunday.
-These will be graded on a scale of check minus (needs improvement),
-check (fine), check + (excellent).
+**Lab**: More involved analyses due on gradescope 8pm Sunday. These will
+be graded on a credit/no credit basis.
 
 To get credit for the course, you must get credit for 2/3 of homeworks
-and get at least a check on 2/3 of the labs.
+and 2/3 of the labs.
 
 ### Tentative list of topics
 
