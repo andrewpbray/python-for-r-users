@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Week 5</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="STAT 198/298 Fall 2020" />
+    <link href="libs/remark-css-0.0.1/metropolis.css" rel="stylesheet" />
+    <link rel="stylesheet" href="cal.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Week 5
+## numpy arrays
+### STAT 198/298 Fall 2020
+
+---
+
+
+
+
+# Send your phone here
+
+&lt;img src="figs/slido-qr.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+Or send a browser to `slido.com`, event `#Z837`.
+
+---
+# Agenda
+
+1. Review: Drawing the Polyforce
+1. Why we need NumPy
+
+---
+
+
+```python
+def draw_polyforce(n, full_side_length = 200, max_n = 55):
+    if n &gt; max_n:
+        raise ValueError("n must not exceed", max_n)
+    triangular_numbers = [0]
+    i = 0
+    while triangular_numbers[-1] &lt; n:
+        triangular_numbers.append(triangular_numbers[i] + i)
+        i += 1
+    if n not in triangular_numbers:
+        raise ValueError("n must be a triangular number")
+    n_rows = len(triangular_numbers) - 2
+    h = math.sqrt(3)/2 * full_side_length
+    x_coords = [x/n_rows * full_side_length for x in 
+                range(0, n_rows)]
+    y_coords = [x/n_rows * h - h/2 for x in range(0, n_rows)]
+    t.penup()
+    for i in range(len(y_coords)):
+        for j in range(len(x_coords)):
+            t.goto(x_coords[j], y_coords[i])
+            draw_golden_tri(full_side_length/n_rows)
+        x_coords = [(a + b) / 2 for a, b in 
+                    zip(x_coords[1:], x_coords[:-1])]
+```
+
+---
+# Check 1: n too large
+
+
+```python
+def draw_polyforce(n, full_side_length = 200, max_n = 55):
+    if n &gt; max_n:
+        raise ValueError("n must not exceed", max_n)
+```
+
+---
+# Check 2: n is a triangular number
+
+## Pascal's Triangle
+
+&lt;img src="figs/pascals-triangle.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+--
+
+Let's build a list of triangular numbers through iteration.
+
+---
+
+## `for` loop
+
+
+```python
+triangular_numbers = [0]
+for i in range(5):
+    triangular_numbers.append(triangular_numbers[i] + i)
+print(triangular_numbers)
+```
+
+--
+
+
+```
+## [0, 0, 1, 3, 6, 10]
+```
+
+--
+
+*Downside*: have to fix the length of the list.
+
+---
+
+### `while` loop
+
+
+```python
+n = 10
+triangular_numbers = [0]
+i = 0
+while triangular_numbers[-1] &lt; n:
+    triangular_numbers.append(triangular_numbers[i] + i)
+    i += 1
+```
+
+--
+
+
+```
+## [0, 0, 1, 3, 6, 10]
+```
+
+---
+# Check 2: n is a triangular number
+
+
+```python
+if n not in triangular_numbers:
+    raise ValueError("n must be a triangular number")
+```
+
+---
+# Moving the Turtle
+
+The goal:
+
+&lt;img src="figs/polyforce.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+--
+
+How do we direct the turtle where to draw each triangle?
+
+---
+# Moving the Turtle
+
+&lt;img src="figs/polyforce.png" width="20%" style="display: block; margin: auto;" /&gt;
+
+One approach:
+
+- Create list of x-coordinates of lower left of each triangle
+
+--
+
+- Create corresponding list of y-coordinates
+
+--
+
+- Iterate through lists and call `draw_golden_tri()` in each loop
+
+---
+# List operations in Python
+
+
+```python
+full_side_length = 200
+n_rows = len(triangular_numbers) - 2
+x_coords = [x/n_rows * full_side_length for x in 
+            range(0, n_rows)]
+```
+
+--
+
+
+```
+## [0.0, 50.0, 100.0, 150.0]
+```
+
+--
+
+## In R
+
+
+
+
+```r
+x_coords = 1:5 / n_rows * full_side_length
+```
+
+
+
+Observation:
+- Even simple operations on the elements of a python list require iterations: loops or list comprehension.
+- This is syntactically tortured and slow.
+
+---
+
+&lt;img src="figs/numpy-logo.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+--
+
+- *Numerical Python* (2005)
+
+--
+
+- Makes available the *numpy array*, efficient storage and operations on arrays
+
+--
+
+- Very natural for R users: np.array `\(\approx\)` R vector (matrix/array)
+
+
+---
+# Creating an array
+
+--
+
+## From a list
+
+
+```python
+import numpy as np
+np.array([1, 5, 3])
+```
+
+--
+
+
+```
+## array([1, 5, 3])
+```
+
+--
+
+## From scratch
+
+
+```python
+np.zeros(3)
+```
+
+--
+
+
+```
+## array([0., 0., 0.])
+```
+
+Also: `np.ones()`, `np.full()`, `np.eye()`, ...
+
+
+---
+# Subsetting
+
+Same as a list.
+
+
+```python
+a = np.array([1, 5, 3])
+a[0]
+```
+
+--
+
+
+```
+## 1
+```
+
+--
+
+
+```python
+a[-1]
+```
+
+--
+
+
+```
+## 3
+```
+
+--
+
+
+```python
+a[0:2]
+```
+
+--
+
+
+```
+## array([1, 5])
+```
+
+---
+# Logical Subsetting with lists
+
+**Question**: How do I extract the values less than 4?
+
+
+```python
+l = [1, 5, 3]
+```
+
+--
+
+
+```python
+[x for x in l if x &lt; 4]
+```
+
+```
+## [1, 3]
+```
+
+--
+
+
+```r
+emo::ji("vomit")
+```
+
+```
+## 🤢
+```
+
+
+---
+# Logical Subsetting with arrays
+
+**Questions**: How do I extract the values less than 4?
+
+
+```python
+a = np.array([1, 5, 3])
+```
+
+--
+
+
+```python
+a[a &lt; 4]
+```
+
+```
+## array([1, 3])
+```
+
+--
+
+
+```r
+emo::ji("grin")
+```
+
+```
+## 😁
+```
+
+--
+
+
+```python
+a &lt; 4
+```
+
+```
+## array([ True, False,  True])
+```
+
+
+---
+# What is its type?
+
+`CODE`
+
+--
+
+
+```python
+type(a)
+```
+
+```
+## &lt;class 'numpy.ndarray'&gt;
+```
+
+--
+
+What are its attributes and methods? (`dir(a)`)
+
+--
+
+
+```python
+a.shape
+```
+
+```
+## (3,)
+```
+
+```python
+a.size
+```
+
+```
+## 3
+```
+
+---
+# Lists vs arrays
+
+### Lists
+
+
+```python
+l1 = [1, 3, 5]
+l2 = [4, 5, 6]
+print(l1 + l2)
+```
+
+--
+
+
+```
+## [1, 3, 5, 4, 5, 6]
+```
+
+--
+
+concatenation
+
+--
+
+### Arrays
+
+
+```python
+a1 = np.array(l1)
+a2 = np.array(l2)
+a1 + a2
+```
+
+--
+
+
+```
+## [ 5  8 11]
+```
+
+--
+
+element-wise addition
+
+
+---
+# Polyforce revisited
+
+## List operations (iterated)
+
+
+```python
+x_coords = [x/n_rows * full_side_length for x in 
+            range(0, n_rows)]
+print(x_coords)
+```
+
+--
+
+
+```
+## [0.0, 50.0, 100.0, 150.0]
+```
+
+--
+
+## Array operations (element-wise)
+
+
+```python
+x_coords = np.array(range(0, n_rows))/n_rows * full_side_length
+print(x_coords)
+```
+
+--
+
+
+```
+## [  0.  50. 100. 150.]
+```
+
+
+
+
+---
+# Array as a data structure
+
+It is:
+
+1. Ordered
+
+--
+
+2. Mutable
+
+--
+
+3. Homogeneous
+
+
+---
+# Homogeneous arrays
+
+**Question**: What is the output of the following code?
+
+
+```python
+a = np.array([3.14, "hello", True])
+```
+
+--
+
+
+```
+## ['3.14' 'hello' 'True']
+```
+
+--
+
+**Question**: What is the output of the following code?
+
+
+```python
+a = np.array([3.14, 3])
+```
+
+--
+
+
+
+Arrays will automatically *upcast/coerce* to make a homogeneous structure.
+
+
+---
+# Creating 2D arrays
+
+### From a list of lists
+
+
+```python
+a2 = np.array([[1, 5, 3],
+               [4, 5, 6]])
+print(a2)
+```
+
+--
+
+
+```
+## [[1 5 3]
+##  [4 5 6]]
+```
+
+--
+
+
+```python
+a2.shape
+```
+
+```
+## (2, 3)
+```
+
+```python
+a2.size
+```
+
+```
+## 6
+```
+
+
+---
+# Creating 2D arrays
+
+### From scratch
+
+
+```python
+a2 = np.ones((2, 3))
+print(a2)
+```
+
+--
+
+
+```
+## [[1. 1. 1.]
+##  [1. 1. 1.]]
+```
+
+--
+
+
+```python
+a2.shape
+```
+
+```
+## (2, 3)
+```
+
+```python
+a2.size
+```
+
+```
+## 6
+```
+
+
+---
+# Subsetting 2D arrays
+
+**Question**: How do I extract the 4?
+
+
+```python
+a2 = np.array([[1, 5, 3],
+              [4, 5, 6]])
+```
+
+--
+
+
+```python
+a2[1]
+```
+
+```
+## array([4, 5, 6])
+```
+
+--
+
+
+```python
+a2[1][0]
+```
+
+```
+## 4
+```
+
+--
+
+
+```python
+a2[1, 0]
+```
+
+```
+## 4
+```
+
+
+---
+# Subsetting 2D arrays
+
+**Question**: How do I extract the subarray contain the left two columns?
+
+
+```python
+a2 = np.array([[1, 5, 3],
+              [4, 5, 6]])
+```
+
+--
+
+
+```python
+a2[:, 0:2]
+```
+
+```
+## array([[1, 5],
+##        [4, 5]])
+```
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "atelier-forest-light",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
