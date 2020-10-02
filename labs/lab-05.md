@@ -1,7 +1,7 @@
 Lab 5: More practice with Penguins
 ================
 
-<img src="figs/penguin-ice-cubes.png" width="30%" style="display: block; margin: auto;" />
+<img src="figs/penguin-ice-cubes.png" width="15%" style="display: block; margin: auto;" />
 
 Consider a plot that’s a riff on the one you made in Lab 2. Here we plot
 penguin bill length vs bill depth, separated out by year.
