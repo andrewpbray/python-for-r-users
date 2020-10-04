@@ -50,7 +50,8 @@ the data as a numpy array, which will give us a bit more power.
     `pypenguins` that contains only numerical data. 1. Extract the
     values from this dictionary and put them into a numpy array called
     `pg_array`. You may need to fiddle with it to get it just right, but
-    aim for a 344 x 5 array of floats.
+    aim for a 344 x 5 array of floats (the number of rows may be less
+    depending on how you removed NAs).
 
 3.  Split the array into three separate arrays, each one containing data
     from a different year. This combines two steps: making a *boolean
