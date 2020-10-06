@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Week 6</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="STAT 198/298 Fall 2020" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Week 6
+## pandas dataframes
+### STAT 198/298 Fall 2020
+
+---
+
+
+
+
+# Agenda
+
+1. Review: Penguin Arrays
+1. Pandas Dataframes
+
+---
+## From the lab
+
+.pull-left[
+
+```r
+library(palmerpenguins)
+library(ggplot2)
+penguins &lt;- as.data.frame(unclass(penguins))
+ggplot(penguins, 
+       aes(x = bill_depth_mm,
+           y = bill_length_mm,
+           color = factor(year))) +
+  geom_point() +
+  labs(x = "bill depth (mm)", 
+       y = "bill length (mm)", 
+       color = "year") +
+  theme_xaringan()
+```
+]
+
+--
+
+.pull-right[
+&lt;img src="06-pandas-dataframes-slides_files/figure-html/unnamed-chunk-2-1.png" width="504" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+## R Dataframe
+
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#rmrjuwixjr .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#rmrjuwixjr .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rmrjuwixjr .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#rmrjuwixjr .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#rmrjuwixjr .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rmrjuwixjr .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#rmrjuwixjr .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#rmrjuwixjr .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#rmrjuwixjr .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#rmrjuwixjr .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#rmrjuwixjr .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#rmrjuwixjr .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#rmrjuwixjr .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#rmrjuwixjr .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#rmrjuwixjr .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#rmrjuwixjr .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#rmrjuwixjr .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#rmrjuwixjr .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rmrjuwixjr .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#rmrjuwixjr .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#rmrjuwixjr .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#rmrjuwixjr .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#rmrjuwixjr .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#rmrjuwixjr .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rmrjuwixjr .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#rmrjuwixjr .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#rmrjuwixjr .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#rmrjuwixjr .gt_left {
+  text-align: left;
+}
+
+#rmrjuwixjr .gt_center {
+  text-align: center;
+}
+
+#rmrjuwixjr .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#rmrjuwixjr .gt_font_normal {
+  font-weight: normal;
+}
+
+#rmrjuwixjr .gt_font_bold {
+  font-weight: bold;
+}
+
+#rmrjuwixjr .gt_font_italic {
+  font-style: italic;
+}
+
+#rmrjuwixjr .gt_super {
+  font-size: 65%;
+}
+
+#rmrjuwixjr .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="rmrjuwixjr" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">species</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">island</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">bill_length_mm</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">bill_depth_mm</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">flipper_length_mm</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">body_mass_g</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">sex</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">year</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_center">Adelie</td>
+      <td class="gt_row gt_center">Torgersen</td>
+      <td class="gt_row gt_right">39.1</td>
+      <td class="gt_row gt_right">18.7</td>
+      <td class="gt_row gt_center">181</td>
+      <td class="gt_row gt_center">3750</td>
+      <td class="gt_row gt_center">male</td>
+      <td class="gt_row gt_center">2007</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Adelie</td>
+      <td class="gt_row gt_center">Torgersen</td>
+      <td class="gt_row gt_right">39.5</td>
+      <td class="gt_row gt_right">17.4</td>
+      <td class="gt_row gt_center">186</td>
+      <td class="gt_row gt_center">3800</td>
+      <td class="gt_row gt_center">female</td>
+      <td class="gt_row gt_center">2007</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Adelie</td>
+      <td class="gt_row gt_center">Torgersen</td>
+      <td class="gt_row gt_right">40.3</td>
+      <td class="gt_row gt_right">18.0</td>
+      <td class="gt_row gt_center">195</td>
+      <td class="gt_row gt_center">3250</td>
+      <td class="gt_row gt_center">female</td>
+      <td class="gt_row gt_center">2007</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Adelie</td>
+      <td class="gt_row gt_center">Torgersen</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_center">NA</td>
+      <td class="gt_row gt_center">NA</td>
+      <td class="gt_row gt_center">NA</td>
+      <td class="gt_row gt_center">2007</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Adelie</td>
+      <td class="gt_row gt_center">Torgersen</td>
+      <td class="gt_row gt_right">36.7</td>
+      <td class="gt_row gt_right">19.3</td>
+      <td class="gt_row gt_center">193</td>
+      <td class="gt_row gt_center">3450</td>
+      <td class="gt_row gt_center">female</td>
+      <td class="gt_row gt_center">2007</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+
+--
+
+### Properties
+
+1.  A *list* of atomic vectors (columns), where the *keys* are called the *names*.
+--
+
+2.  Each atomic vector can be a different type.
+--
+
+3.  Each atomic vector can be the same length.
+--
+
+4.  Can be indexed like a matrix (`penguins[3, 2]`) or a list (`penguins[[2]][3]` or `penguins$island[3]`).
+--
+
+5.  Can add row names.
+
+
+---
+## Rownames in R
+--
+
+
+
+```r
+small_penguins &lt;- slice(penguins, 1:5)
+rownames(small_penguins) &lt;- c("janet", "phyllis", "jose", 
+                              "benny", "marty")
+```
+--
+
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#phqfkznbcs .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#phqfkznbcs .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#phqfkznbcs .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#phqfkznbcs .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#phqfkznbcs .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#phqfkznbcs .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#phqfkznbcs .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#phqfkznbcs .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#phqfkznbcs .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#phqfkznbcs .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#phqfkznbcs .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#phqfkznbcs .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#phqfkznbcs .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#phqfkznbcs .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#phqfkznbcs .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#phqfkznbcs .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#phqfkznbcs .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#phqfkznbcs .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#phqfkznbcs .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#phqfkznbcs .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#phqfkznbcs .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#phqfkznbcs .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#phqfkznbcs .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#phqfkznbcs .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#phqfkznbcs .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#phqfkznbcs .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#phqfkznbcs .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#phqfkznbcs .gt_left {
+  text-align: left;
+}
+
+#phqfkznbcs .gt_center {
+  text-align: center;
+}
+
+#phqfkznbcs .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#phqfkznbcs .gt_font_normal {
+  font-weight: normal;
+}
+
+#phqfkznbcs .gt_font_bold {
+  font-weight: bold;
+}
+
+#phqfkznbcs .gt_font_italic {
+  font-style: italic;
+}
+
+#phqfkznbcs .gt_super {
+  font-size: 65%;
+}
+
+#phqfkznbcs .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="phqfkznbcs" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">species</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">island</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">bill_length_mm</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">bill_depth_mm</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">flipper_length_mm</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">body_mass_g</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">sex</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">year</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left gt_stub">janet</td>
+      <td class="gt_row gt_center">Adelie</td>
+      <td class="gt_row gt_center">Torgersen</td>
+      <td class="gt_row gt_right">39.1</td>
+      <td class="gt_row gt_right">18.7</td>
+      <td class="gt_row gt_center">181</td>
+      <td class="gt_row gt_center">3750</td>
+      <td class="gt_row gt_center">male</td>
+      <td class="gt_row gt_center">2007</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left gt_stub">phyllis</td>
+      <td class="gt_row gt_center">Adelie</td>
+      <td class="gt_row gt_center">Torgersen</td>
+      <td class="gt_row gt_right">39.5</td>
+      <td class="gt_row gt_right">17.4</td>
+      <td class="gt_row gt_center">186</td>
+      <td class="gt_row gt_center">3800</td>
+      <td class="gt_row gt_center">female</td>
+      <td class="gt_row gt_center">2007</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left gt_stub">jose</td>
+      <td class="gt_row gt_center">Adelie</td>
+      <td class="gt_row gt_center">Torgersen</td>
+      <td class="gt_row gt_right">40.3</td>
+      <td class="gt_row gt_right">18.0</td>
+      <td class="gt_row gt_center">195</td>
+      <td class="gt_row gt_center">3250</td>
+      <td class="gt_row gt_center">female</td>
+      <td class="gt_row gt_center">2007</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left gt_stub">benny</td>
+      <td class="gt_row gt_center">Adelie</td>
+      <td class="gt_row gt_center">Torgersen</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_center">NA</td>
+      <td class="gt_row gt_center">NA</td>
+      <td class="gt_row gt_center">NA</td>
+      <td class="gt_row gt_center">2007</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left gt_stub">marty</td>
+      <td class="gt_row gt_center">Adelie</td>
+      <td class="gt_row gt_center">Torgersen</td>
+      <td class="gt_row gt_right">36.7</td>
+      <td class="gt_row gt_right">19.3</td>
+      <td class="gt_row gt_center">193</td>
+      <td class="gt_row gt_center">3450</td>
+      <td class="gt_row gt_center">female</td>
+      <td class="gt_row gt_center">2007</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+
+
+---
+# Indexing by rowname
+--
+
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#yqjitksjdx .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#yqjitksjdx .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yqjitksjdx .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#yqjitksjdx .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#yqjitksjdx .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yqjitksjdx .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#yqjitksjdx .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#yqjitksjdx .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#yqjitksjdx .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#yqjitksjdx .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#yqjitksjdx .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#yqjitksjdx .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#yqjitksjdx .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#yqjitksjdx .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#yqjitksjdx .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#yqjitksjdx .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#yqjitksjdx .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#yqjitksjdx .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yqjitksjdx .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#yqjitksjdx .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#yqjitksjdx .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#yqjitksjdx .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#yqjitksjdx .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#yqjitksjdx .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yqjitksjdx .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#yqjitksjdx .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#yqjitksjdx .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#yqjitksjdx .gt_left {
+  text-align: left;
+}
+
+#yqjitksjdx .gt_center {
+  text-align: center;
+}
+
+#yqjitksjdx .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#yqjitksjdx .gt_font_normal {
+  font-weight: normal;
+}
+
+#yqjitksjdx .gt_font_bold {
+  font-weight: bold;
+}
+
+#yqjitksjdx .gt_font_italic {
+  font-style: italic;
+}
+
+#yqjitksjdx .gt_super {
+  font-size: 65%;
+}
+
+#yqjitksjdx .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="yqjitksjdx" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">species</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">island</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">bill_length_mm</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1">bill_depth_mm</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">flipper_length_mm</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">body_mass_g</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">sex</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">year</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_center">Adelie</td>
+      <td class="gt_row gt_center">Torgersen</td>
+      <td class="gt_row gt_right">39.1</td>
+      <td class="gt_row gt_right">18.7</td>
+      <td class="gt_row gt_center">181</td>
+      <td class="gt_row gt_center">3750</td>
+      <td class="gt_row gt_center">male</td>
+      <td class="gt_row gt_center">2007</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Adelie</td>
+      <td class="gt_row gt_center">Torgersen</td>
+      <td class="gt_row gt_right">39.5</td>
+      <td class="gt_row gt_right">17.4</td>
+      <td class="gt_row gt_center">186</td>
+      <td class="gt_row gt_center">3800</td>
+      <td class="gt_row gt_center">female</td>
+      <td class="gt_row gt_center">2007</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Adelie</td>
+      <td class="gt_row gt_center">Torgersen</td>
+      <td class="gt_row gt_right">40.3</td>
+      <td class="gt_row gt_right">18.0</td>
+      <td class="gt_row gt_center">195</td>
+      <td class="gt_row gt_center">3250</td>
+      <td class="gt_row gt_center">female</td>
+      <td class="gt_row gt_center">2007</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Adelie</td>
+      <td class="gt_row gt_center">Torgersen</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_right">NA</td>
+      <td class="gt_row gt_center">NA</td>
+      <td class="gt_row gt_center">NA</td>
+      <td class="gt_row gt_center">NA</td>
+      <td class="gt_row gt_center">2007</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_center">Adelie</td>
+      <td class="gt_row gt_center">Torgersen</td>
+      <td class="gt_row gt_right">36.7</td>
+      <td class="gt_row gt_right">19.3</td>
+      <td class="gt_row gt_center">193</td>
+      <td class="gt_row gt_center">3450</td>
+      <td class="gt_row gt_center">female</td>
+      <td class="gt_row gt_center">2007</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+
+
+```r
+small_penguins["phyllis", "bill_length_mm"]
+```
+--
+
+
+```
+## [1] 39.5
+```
+
+
+
+---
+# Colnames in R
+--
+
+
+```r
+colnames(small_penguins)
+```
+--
+
+
+```
+## [1] "species"           "island"           
+## [3] "bill_length_mm"    "bill_depth_mm"    
+## [5] "flipper_length_mm" "body_mass_g"      
+## [7] "sex"               "year"
+```
+--
+
+
+```r
+names(small_penguins)
+```
+--
+
+
+```
+## [1] "species"           "island"           
+## [3] "bill_length_mm"    "bill_depth_mm"    
+## [5] "flipper_length_mm" "body_mass_g"      
+## [7] "sex"               "year"
+```
+--
+
+What's the difference?
+
+`CODE`
+
+---
+## Advice on rownames
+
+*"Generally, it is best to avoid row names, because they are basically a character column with different semantics than every other column."*
+--
+
+&gt; Treat rownames like an ordinary column of strings.
+--
+
+
+
+
+```r
+small_penguins &lt;- rownames_to_column(small_penguins,
+                                     var = "given_name")
+small_penguins[small_penguins$given_name == "phyllis",
+               "bill_length_mm"]
+```
+--
+
+
+```
+## # A tibble: 1 x 1
+##   bill_length_mm
+##            &lt;dbl&gt;
+## 1           39.5
+```
+
+
+
+
+
+---
+## Into Python
+--
+
+**Step one**: remove missing values (in R).
+--
+
+
+```r
+small_penguins &lt;- small_penguins %&gt;%
+  select(-given_name) %&gt;%
+  tidyr::drop_na()
+```
+--
+
+**Step two**: make type homogeneous
+--
+
+
+```python
+import numpy as np
+pypenguins = r.small_penguins
+pypenguins = {k:v for (k,v) in pypenguins.items() if k not in ["species", "island", "sex"]}
+pg_array = np.array(list(pypenguins.values()), dtype = "float64").transpose()
+pg_array
+```
+--
+
+
+```
+## array([[  39.1,   18.7,  181. , 3750. , 2007. ],
+##        [  39.5,   17.4,  186. , 3800. , 2007. ],
+##        [  40.3,   18. ,  195. , 3250. , 2007. ],
+##        [  36.7,   19.3,  193. , 3450. , 2007. ]])
+```
+--
+
+
+```python
+pg_array[1, 0]
+```
+--
+
+
+```
+## 39.5
+```
+
+
+---
+## Limitations of Numpy Array
+--
+
+1. Type homogenous
+--
+
+2. Can only subset by index
+    - Loses context of data
+--
+
+
+---
+
+&lt;img src="figs/pandas-logo.png" width="50%" style="display: block; margin: auto;" /&gt;
+--
+
+A package built on top of Numpy to provide data structures and operations needed
+by modern data science workflows.
+
+--
+
+### New data structures
+
+1. *Series*: roughly, a named atomic vector in R
+2. *Dataframe*: roughly, an R dataframe
+
+
+---
+## Pandas
+--
+
+### Install pandas
+
+```r
+reticulate::py_install("pandas")
+```
+--
+
+### Load pandas
+
+
+```python
+import pandas as pd
+```
+
+
+---
+## Pandas Series
+--
+
+
+```python
+s = pd.Series([1, 2, 3, 4])
+s
+```
+--
+
+
+```
+## 0    1
+## 1    2
+## 2    3
+## 3    4
+## dtype: int64
+```
+--
+
+Series are like one dimensional numpy arrays but with an *explicit* index.
+--
+
+
+```python
+s.index
+```
+--
+
+
+```
+## RangeIndex(start=0, stop=4, step=1)
+```
+--
+
+
+```python
+s.values
+```
+--
+
+
+```
+## array([1, 2, 3, 4])
+```
+
+
+---
+## Series Indexing
+--
+
+We can subset a series just like a list or an array.
+
+
+```python
+s[0:2]
+```
+--
+
+
+```
+## 0    1
+## 1    2
+## dtype: int64
+```
+--
+
+Or we can use an alternative, explicit index (or name).
+--
+
+
+```python
+s = pd.Series([1, 2, 3, 4],
+              index = ["one", "two", "three", "four"])
+s
+```
+--
+
+
+```
+## one      1
+## two      2
+## three    3
+## four     4
+## dtype: int64
+```
+
+
+---
+## Series indexing
+
+
+```
+## one      1
+## two      2
+## three    3
+## four     4
+## dtype: int64
+```
+
+Subset by new explicit index:
+
+
+```python
+s["two"]
+```
+--
+
+
+```
+## 2
+```
+--
+
+Or continue to use the *implicit* integer index.
+
+
+```python
+s[1]
+```
+--
+
+
+```
+## 2
+```
+
+
+---
+## These kinda look like...
+--
+
+Dictionaries!
+
+
+```python
+d = {"one":1, "two":2, "three":3, "four":4}
+d["two"]
+```
+--
+
+
+```
+## 2
+```
+--
+
+
+```python
+d[2]
+```
+--
+
+
+```
+## Error in py_call_impl(callable, dots$args, dots$keywords): KeyError: 1
+```
+--
+
+
+```python
+pd.Series(d)[1]
+```
+--
+
+
+```
+## 2
+```
+
+--
+
+```python
+pd.Series(d)["one":"two"]
+```
+--
+
+
+```
+## one    1
+## two    2
+## dtype: int64
+```
+
+
+---
+## Pandas Dataframes
+--
+
+A two-dimensional generalization of a series. Let's build one.
+--
+
+
+```python
+d_pop = {"California": 38332521,
+         "Texas": 26448193,
+         "New York": 19651127,
+         "Florida": 19552860,
+         "Illinois": 12882135}
+s_pop = pd.Series(d_pop)
+s_pop
+```
+--
+
+
+```
+## California    38332521
+## Texas         26448193
+## New York      19651127
+## Florida       19552860
+## Illinois      12882135
+## dtype: int64
+```
+--
+
+
+```python
+s_area = pd.Series({"California": 423967,
+                    "Florida": 170312,
+                    "Illinois": 149995,
+                    "New York": 141297,
+                    "Texas": 695662})
+```
+
+
+---
+## Pandas Dataframes
+
+`CODE`
+
+
+---
+## Pandas Dataframes
+
+
+```python
+states = pd.DataFrame({"population": s_pop, "area": s_area})
+states
+```
+
+```
+##             population    area
+## California    38332521  423967
+## Florida       19552860  170312
+## Illinois      12882135  149995
+## New York      19651127  141297
+## Texas         26448193  695662
+```
+--
+
+- A dataframe can also be built from a numpy array.
+- If column or row names are omitted, integers indices are used.
+
+
+---
+## Penguins Dataframe
+
+
+```python
+pypenguins = pd.DataFrame(r.small_penguins)
+pypenguins
+```
+--
+
+
+```
+##   species     island  bill_length_mm  ...  body_mass_g     sex  year
+## 0  Adelie  Torgersen            39.1  ...         3750    male  2007
+## 1  Adelie  Torgersen            39.5  ...         3800  female  2007
+## 2  Adelie  Torgersen            40.3  ...         3250  female  2007
+## 3  Adelie  Torgersen            36.7  ...         3450  female  2007
+## 
+## [4 rows x 8 columns]
+```
+
+---
+## Subsetting Penguins
+
+**Question**: How do I extract a dataframe of only the female penguins with bill lengths greater than 40 mm?
+--
+
+
+```python
+female_mask = pypenguins["sex"] == "female"
+short_bill_mask = pypenguins["bill_length_mm"] &gt; 40
+pypenguins.loc[female_mask &amp; short_bill_mask, :]
+```
+--
+
+
+```
+##   species     island  bill_length_mm  ...  body_mass_g     sex  year
+## 2  Adelie  Torgersen            40.3  ...         3250  female  2007
+## 
+## [1 rows x 8 columns]
+```
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "atelier-forest-light",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

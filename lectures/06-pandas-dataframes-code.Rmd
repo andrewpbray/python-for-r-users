@@ -1,0 +1,101 @@
+---
+title: "Week 6"
+subtitle: "pandas dataframes"
+author: "STAT 198/298 Fall 2020"
+output: html_output
+---
+
+```{r}
+library(palmerpenguins)
+library(ggplot2)
+penguins <- as.data.frame(unclass(penguins))
+small_penguins <- slice(penguins, 1:5)
+```
+
+## Colnames vs names
+
+```{r}
+?colnames
+?names
+
+vec <- 1:4
+names(vec) <- c("one", "two", "three", "four")
+vec["two"]
+```
+
+
+## Advice on rownames
+
+```{r}
+data(penguins)
+small_penguins <- slice(penguins, 1:5)
+rownames(small_penguins) <- c("janet", "phyllis", "jose", "benny", "marty")
+small_penguins <- rownames_to_column(small_penguins, var = "given_name")
+small_penguins[small_penguins$given_name == "phyllis", "island"]
+```
+
+
+
+## Pandas dataframes
+
+```{python}
+d_pop = {"California": 38332521,
+         "Texas": 26448193,
+         "New York": 19651127,
+         "Florida": 19552860,
+         "Illinois": 12882135}
+s_pop = pd.Series(d_pop)
+s_area = pd.Series({"California": 423967,
+                    "Florida": 170312,
+                    "Illinois": 149995,
+                    "New York": 141297,
+                    "Texas": 695662})
+states = pd.DataFrame({"population": s_pop, "area": s_area})
+states
+```
+
+## Subsetting
+
+```{python}
+states["area"]
+states["Florida"]
+states[1]
+```
+
+## Use implicit indices
+
+```{python}
+states.values
+states.index
+states.columns
+states.iloc
+```
+
+```{python}
+states.iloc[1, 0]
+states.iloc[1, 0:2]
+```
+
+## Use explicit indices
+
+```{python}
+states.loc["Florida", "area"]
+states.loc[:"Florida", "area"]
+```
+
+
+## Subset via boolean masks
+
+```{python}
+states.loc[:, "area"]
+mask = states.loc[:, "area"] < 400000
+states.loc[mask, :]
+```
+
+
+
+
+
+
+
+

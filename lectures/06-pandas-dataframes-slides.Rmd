@@ -1,0 +1,535 @@
+---
+title: "Week 6"
+subtitle: "pandas dataframes"
+author: "STAT 198/298 Fall 2020"
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    lib_dir: libs
+    nature:
+      highlightStyle: atelier-forest-light
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE, warning=FALSE}
+knitr::opts_chunk$set(message = FALSE, 
+                      fig.align = "center",
+                      fig.retina = 3,
+                      warning = FALSE)
+
+library(tidyverse)
+library(reticulate)
+library(emo)
+library(xaringanthemer)
+source("https://raw.githubusercontent.com/andrewpbray/stitched/master/demos/slides_css.R")
+```
+
+# Agenda
+
+1. Review: Penguin Arrays
+1. Pandas Dataframes
+
+---
+## From the lab
+
+.pull-left[
+```{r eval = FALSE}
+library(palmerpenguins)
+library(ggplot2)
+penguins <- as.data.frame(unclass(penguins))
+ggplot(penguins, 
+       aes(x = bill_depth_mm,
+           y = bill_length_mm,
+           color = factor(year))) +
+  geom_point() +
+  labs(x = "bill depth (mm)", 
+       y = "bill length (mm)", 
+       color = "year") +
+  theme_xaringan()
+```
+]
+
+--
+
+.pull-right[
+```{r echo = FALSE, fig.height = 6}
+library(palmerpenguins)
+library(ggplot2)
+penguins <- as.data.frame(unclass(penguins))
+ggplot(penguins, 
+       aes(x = bill_depth_mm,
+           y = bill_length_mm,
+           color = factor(year))) +
+  geom_point() +
+  labs(x = "bill depth (mm)", 
+       y = "bill length (mm)", 
+       color = "year") +
+  theme_xaringan()
+```
+]
+
+
+---
+## R Dataframe
+
+```{r echo = FALSE}
+library(gt)
+penguins %>%
+  slice(1:5) %>%
+  gt()
+```
+
+--
+
+### Properties
+
+1.  A *list* of atomic vectors (columns), where the *keys* are called the *names*.
+--
+
+2.  Each atomic vector can be a different type.
+--
+
+3.  Each atomic vector can be the same length.
+--
+
+4.  Can be indexed like a matrix (`penguins[3, 2]`) or a list (`penguins[[2]][3]` or `penguins$island[3]`).
+--
+
+5.  Can add row names.
+
+
+---
+## Rownames in R
+--
+
+
+```{r}
+small_penguins <- slice(penguins, 1:5)
+rownames(small_penguins) <- c("janet", "phyllis", "jose", 
+                              "benny", "marty")
+```
+--
+
+```{r echo = FALSE}
+gt(small_penguins, rownames_to_stub = TRUE)
+```
+
+
+---
+# Indexing by rowname
+--
+
+```{r echo = FALSE}
+gt(small_penguins)
+```
+
+```{r eval = FALSE}
+small_penguins["phyllis", "bill_length_mm"]
+```
+--
+
+```{r echo = FALSE}
+small_penguins["phyllis", "bill_length_mm"]
+```
+
+
+
+---
+# Colnames in R
+--
+
+```{r eval = FALSE}
+colnames(small_penguins)
+```
+--
+
+```{r echo = FALSE}
+colnames(small_penguins)
+```
+--
+
+```{r eval = FALSE}
+names(small_penguins)
+```
+--
+
+```{r echo = FALSE}
+names(small_penguins)
+```
+--
+
+What's the difference?
+
+`CODE`
+
+---
+## Advice on rownames
+
+*"Generally, it is best to avoid row names, because they are basically a character column with different semantics than every other column."*
+--
+
+> Treat rownames like an ordinary column of strings.
+--
+
+```{r echo = FALSE}
+data(penguins)
+small_penguins <- slice(penguins, 1:5)
+rownames(small_penguins) <- c("janet", "phyllis", "jose", 
+                              "benny", "marty")
+```
+
+```{r eval = FALSE}
+small_penguins <- rownames_to_column(small_penguins,
+                                     var = "given_name")
+small_penguins[small_penguins$given_name == "phyllis",
+               "bill_length_mm"]
+```
+--
+
+```{r echo = FALSE}
+small_penguins <- rownames_to_column(small_penguins,
+                                     var = "given_name")
+small_penguins[small_penguins$given_name == "phyllis",
+               "bill_length_mm"]
+```
+
+
+
+
+
+---
+## Into Python
+--
+
+**Step one**: remove missing values (in R).
+--
+
+```{r}
+small_penguins <- small_penguins %>%
+  select(-given_name) %>%
+  tidyr::drop_na()
+```
+--
+
+**Step two**: make type homogeneous
+--
+
+```{python eval = FALSE}
+import numpy as np
+pypenguins = r.small_penguins
+pypenguins = {k:v for (k,v) in pypenguins.items() if k not in ["species", "island", "sex"]}
+pg_array = np.array(list(pypenguins.values()), dtype = "float64").transpose()
+pg_array
+```
+--
+
+```{python echo = FALSE}
+import numpy as np
+pypenguins = r.small_penguins
+pypenguins = {k:v for (k,v) in pypenguins.items() if k not in ["species", "island", "sex"]}
+pg_array = np.array(list(pypenguins.values()), dtype = "float64").transpose()
+pg_array
+```
+--
+
+```{python eval = FALSE}
+pg_array[1, 0]
+```
+--
+
+```{python echo = FALSE}
+pg_array[1, 0]
+```
+
+
+---
+## Limitations of Numpy Array
+--
+
+1. Type homogenous
+--
+
+2. Can only subset by index
+    - Loses context of data
+--
+
+
+---
+
+```{r echo = FALSE, fig.align="center", out.width="50%"}
+knitr::include_graphics("figs/pandas-logo.png")
+```
+--
+
+A package built on top of Numpy to provide data structures and operations needed
+by modern data science workflows.
+
+--
+
+### New data structures
+
+1. *Series*: roughly, a named atomic vector in R
+2. *Dataframe*: roughly, an R dataframe
+
+
+---
+## Pandas
+--
+
+### Install pandas
+```{r eval = FALSE}
+reticulate::py_install("pandas")
+```
+--
+
+### Load pandas
+
+```{python}
+import pandas as pd
+```
+
+
+---
+## Pandas Series
+--
+
+```{python eval = FALSE}
+s = pd.Series([1, 2, 3, 4])
+s
+```
+--
+
+```{python echo = FALSE}
+s = pd.Series([1, 2, 3, 4])
+s
+```
+--
+
+Series are like one dimensional numpy arrays but with an *explicit* index.
+--
+
+```{python eval = FALSE}
+s.index
+```
+--
+
+```{python echo = FALSE}
+s.index
+```
+--
+
+```{python eval = FALSE}
+s.values
+```
+--
+
+```{python echo = FALSE}
+s.values
+```
+
+
+---
+## Series Indexing
+--
+
+We can subset a series just like a list or an array.
+
+```{python eval = FALSE}
+s[0:2]
+```
+--
+
+```{python echo = FALSE}
+s[0:2]
+```
+--
+
+Or we can use an alternative, explicit index (or name).
+--
+
+```{python eval = FALSE}
+s = pd.Series([1, 2, 3, 4],
+              index = ["one", "two", "three", "four"])
+s
+```
+--
+
+```{python echo = FALSE}
+s = pd.Series([1, 2, 3, 4],
+              index = ["one", "two", "three", "four"])
+s
+```
+
+
+---
+## Series indexing
+
+```{python echo = FALSE}
+s
+```
+
+Subset by new explicit index:
+
+```{python eval = FALSE}
+s["two"]
+```
+--
+
+```{python echo = FALSE}
+s["two"]
+```
+--
+
+Or continue to use the *implicit* integer index.
+
+```{python eval = FALSE}
+s[1]
+```
+--
+
+```{python echo = FALSE}
+s[1]
+```
+
+
+---
+## These kinda look like...
+--
+
+Dictionaries!
+
+```{python eval = FALSE}
+d = {"one":1, "two":2, "three":3, "four":4}
+d["two"]
+```
+--
+
+```{python echo = FALSE}
+d = {"one":1, "two":2, "three":3, "four":4}
+d["two"]
+```
+--
+
+```{python eval = FALSE}
+d[2]
+```
+--
+
+```{python echo = FALSE, error = TRUE}
+d[1]
+```
+--
+
+```{python eval = FALSE}
+pd.Series(d)[1]
+```
+--
+
+```{python echo = FALSE}
+pd.Series(d)[1]
+```
+
+--
+```{python eval = FALSE}
+pd.Series(d)["one":"two"]
+```
+--
+
+```{python echo = FALSE}
+pd.Series(d)["one":"two"]
+```
+
+
+---
+## Pandas Dataframes
+--
+
+A two-dimensional generalization of a series. Let's build one.
+--
+
+```{python eval = FALSE}
+d_pop = {"California": 38332521,
+         "Texas": 26448193,
+         "New York": 19651127,
+         "Florida": 19552860,
+         "Illinois": 12882135}
+s_pop = pd.Series(d_pop)
+s_pop
+```
+--
+
+```{python echo = FALSE}
+d_pop = {"California": 38332521,
+         "Texas": 26448193,
+         "New York": 19651127,
+         "Florida": 19552860,
+         "Illinois": 12882135}
+s_pop = pd.Series(d_pop)
+s_pop
+```
+--
+
+```{python}
+s_area = pd.Series({"California": 423967,
+                    "Florida": 170312,
+                    "Illinois": 149995,
+                    "New York": 141297,
+                    "Texas": 695662})
+```
+
+
+---
+## Pandas Dataframes
+
+`CODE`
+
+
+---
+## Pandas Dataframes
+
+```{python}
+states = pd.DataFrame({"population": s_pop, "area": s_area})
+states
+```
+--
+
+- A dataframe can also be built from a numpy array.
+- If column or row names are omitted, integers indices are used.
+
+
+---
+## Penguins Dataframe
+
+```{python eval = FALSE}
+pypenguins = pd.DataFrame(r.small_penguins)
+pypenguins
+```
+--
+
+```{python echo = FALSE}
+pypenguins = pd.DataFrame(r.small_penguins)
+pypenguins
+```
+
+---
+## Subsetting Penguins
+
+**Question**: How do I extract a dataframe of only the female penguins with bill lengths greater than 40 mm?
+--
+
+```{python eval = FALSE}
+female_mask = pypenguins["sex"] == "female"
+short_bill_mask = pypenguins["bill_length_mm"] > 40
+pypenguins.loc[female_mask & short_bill_mask, :]
+```
+--
+
+```{python echo = FALSE}
+female_mask = pypenguins["sex"] == "female"
+short_bill_mask = pypenguins["bill_length_mm"] > 40
+pypenguins.loc[female_mask & short_bill_mask, :]
+```
+
+
