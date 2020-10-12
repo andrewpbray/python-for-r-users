@@ -3,7 +3,7 @@ Lab 6: Wrangling Takeoff
 
 <img src="figs/tiny-airplane.png" width="15%" style="display: block; margin: auto;" />
 
-The `calflights` package contains a data set called `flights` that
+The `boxofdata` package contains a data set called `flights` that
 contains *all* of the flights that left from San Francisco International
 Airport and Oakland International Airports between July 1st and December
 31st 2019. This will serve a rich data set to practice your data
@@ -22,8 +22,8 @@ through this lab with `small_flights` instead of `flights`.
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("andrewpbray/calflights")
-library(calflights)
+remotes::install_github("andrewpbray/boxofdata")
+library(boxofdata)
 library(reticulate)
 library(dplyr)
 data(flights)
