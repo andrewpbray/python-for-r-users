@@ -29,9 +29,7 @@ Extract the first three rows where the candidate got more than 90% of the vote.
 Which candidates were on the ballot in California in 2016?
 
 ```{python}
-uselections["candidate"].unique()
-mask = (uselections["year"] == 2016) & (uselections["state_po"] == "CA")
-uselections[mask]["candidate"].unique()
+
 ```
 
 
@@ -40,13 +38,15 @@ uselections[mask]["candidate"].unique()
 Which were the top 5 counties in California in 2016 in the proportion of the vote won by Hillary Clinton?
 
 ```{python}
-mask = (uselections["year"] == 2016) & (uselections["state_po"] == "CA") & (uselections["candidate"] == "Hillary Clinton")
-df = uselections[mask]
-df["prop"] = df["candidatevotes"]/df["totalvotes"]
-df.sort_values("prop", ascending = False)["county"]
+
 ```
 
 
 ### Question 4
 
 For each county in California in 2016, calculate the proportion of votes for each major party candidate.
+
+```{python}
+
+```
+
