@@ -20,21 +20,20 @@ class: center, middle, inverse, title-slide
 
 
 
-
 # Agenda
 
-1. Review
-2. Stuff
-3. Group by
-
+1.  Review
+2.  Stuff
+3.  Group by
 
 ---
+
 # US Elections Data
 --
 
-- From MIT Elections Lab
-- County-level Data
-- President elections 2000 - 2016
+-   From MIT Elections Lab
+-   County-level Data
+-   President elections 2000 - 2016
 
 
 ```r
@@ -54,13 +53,15 @@ names(uselections)
 ```
 
 ```
-##  [1] "year"           "state"          "state_po"       "county"        
-##  [5] "FIPS"           "office"         "candidate"      "party"         
-##  [9] "candidatevotes" "totalvotes"     "version"
+##  [1] "year"           "state"          "state_po"       "county"         "FIPS"          
+##  [6] "office"         "candidate"      "party"          "candidatevotes" "totalvotes"    
+## [11] "version"
 ```
 
 ---
+
 # US Elections Data, cont.
+--
 
 
 | year|state   |county  |candidate      |party      | candidatevotes| totalvotes|
@@ -74,7 +75,9 @@ names(uselections)
 | 2000|Alabama |Baldwin |Ralph Nader    |green      |           1033|      56480|
 | 2000|Alabama |Baldwin |Other          |NA         |            578|      56480|
 
+
 ---
+
 # Into Python
 --
 
@@ -120,10 +123,10 @@ uselections.dtypes
 
 
 ---
-# Select columns
---
 
-**Method 1:** Pass a *string* into `[]`...
+# Select columns
+
+**Method 1:**  Pass a *string* into `[]`...
 
 --
 
@@ -149,12 +152,14 @@ uselections["county"]
 ## 50523    District 99
 ## Name: county, Length: 50524, dtype: object
 ```
+
 --
 
 ... get out a series.
 
 
 ---
+
 # Select columns
 
 **Method 2:** Pass a *list* into `[]`...
@@ -185,15 +190,20 @@ uselections[["county"]]
 ## 
 ## [50524 rows x 1 columns]
 ```
+
 --
 
-... get out a dataframe.
+... get out a data frame.
+
 
 ---
-# Slice rows
+
+# Slicing rows
 --
 
-Pass a *slice* into `[]`...
+**Method 1:** Pass a *slice* into `[]`...
+
+--
 
 
 ```python
@@ -201,6 +211,7 @@ uselections[0:5]
 ```
 
 --
+
 
 ```
 ##      year    state state_po  ... candidatevotes  totalvotes     version
@@ -212,28 +223,29 @@ uselections[0:5]
 ## 
 ## [5 rows x 11 columns]
 ```
+
 --
 
-...get out a slice of rows. Does this terminology sound familiar?
+... get out a slice data frame. Sound familiar?
 
 --
 
 
 ```r
-dplyr::slice(uselections, 1:2)
+slice(uselections, 1:2)
 ```
 
 ```
 ## # A tibble: 2 x 11
-##    year state state_po county  FIPS office candidate party candidatevotes
-##   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;          &lt;dbl&gt;
-## 1  2000 Alab… AL       Autau…  1001 Presi… Al Gore   demo…           4942
-## 2  2000 Alab… AL       Autau…  1001 Presi… George W… repu…          11993
-## # … with 2 more variables: totalvotes &lt;dbl&gt;, version &lt;dbl&gt;
+##    year state  state_po county   FIPS office candidate  party  candidatevotes totalvotes version
+##   &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;           &lt;dbl&gt;      &lt;dbl&gt;   &lt;dbl&gt;
+## 1  2000 Alaba… AL       Autauga  1001 Presi… Al Gore    democ…           4942      17208  2.02e7
+## 2  2000 Alaba… AL       Autauga  1001 Presi… George W.… repub…          11993      17208  2.02e7
 ```
 
 
 ---
+
 # Selecting and slicing
 --
 
@@ -245,6 +257,7 @@ uselections.loc[0:5, ["county"]]
 ```
 
 --
+
 
 ```
 ##     county
@@ -258,6 +271,7 @@ uselections.loc[0:5, ["county"]]
 
 
 ---
+
 # Selecting and slicing
 --
 
@@ -269,6 +283,7 @@ uselections.columns
 ```
 
 --
+
 
 ```
 ## Index(['year', 'state', 'state_po', 'county', 'FIPS', 'office', 'candidate',
@@ -285,6 +300,7 @@ uselections.iloc[0:5, 3]
 
 --
 
+
 ```
 ## 0    Autauga
 ## 1    Autauga
@@ -294,7 +310,9 @@ uselections.iloc[0:5, 3]
 ## Name: county, dtype: object
 ```
 
+
 ---
+
 # Filtering rows
 --
 
@@ -305,6 +323,7 @@ You can apply a Boolean series as a mask.
 mask = uselections["year"] == 2016
 uselections[mask]
 ```
+
 --
 
 
@@ -327,39 +346,8 @@ uselections[mask]
 
 
 ---
-# Filtering rows
 
-FYI: use `.isin` to mask based on set membership.
-
-
-```python
-mask = uselections["year"].isin([2012, 2016])
-uselections[mask]
-```
---
-
-
-```
-##          year    state state_po  ... candidatevotes  totalvotes     version
-## 31166  2012.0  Alabama       AL  ...         6363.0     23932.0  20191203.0
-## 31167  2012.0  Alabama       AL  ...        17379.0     23932.0  20191203.0
-## 31168  2012.0  Alabama       AL  ...          190.0     23932.0  20191203.0
-## 31169  2012.0  Alabama       AL  ...        18424.0     85338.0  20191203.0
-## 31170  2012.0  Alabama       AL  ...        66016.0     85338.0  20191203.0
-## ...       ...      ...      ...  ...            ...         ...         ...
-## 50519  2016.0   Alaska       AK  ...         1377.0      4610.0  20191203.0
-## 50520  2016.0   Alaska       AK  ...          895.0      4610.0  20191203.0
-## 50521  2016.0   Alaska       NA  ...          274.0      5056.0  20191203.0
-## 50522  2016.0   Alaska       NA  ...           40.0      5056.0  20191203.0
-## 50523  2016.0   Alaska       NA  ...           28.0      5056.0  20191203.0
-## 
-## [18948 rows x 11 columns]
-```
-
-
----
-# Filtering rows and selecting columns
---
+## Filtering rows and selecting columns
 
 Boolean mask plus a list of columns.
 
@@ -380,6 +368,7 @@ Will this run?
 mask = uselections["year"].isin([2012, 2016])
 *uselections.loc[mask, ["county", "state"]]
 ```
+
 --
 
 
@@ -400,10 +389,157 @@ mask = uselections["year"].isin([2012, 2016])
 ## [18948 rows x 2 columns]
 ```
 
+
 ---
-# Adding a column
+
+### Let's shine that up.
+
+1.  Form data frame.
+2.  Apply `.agg()` method.
+3.  Pass as the aggregation function the string method to `.join`.
+
 --
 
+
+
+---
+
+# Pandas Inventory
+
+Now we know how to:
+
+1. Select columns
+--
+
+2. Slice rows
+--
+
+3. Do both simultaneously
+--
+
+4. Filter rows using boolean masks
+--
+
+5. Add columns
+
+
+---
+
+# Practice: Question 1
+
+---
+
+# Practice: Question 1
+
+Extract the first three rows where the candidate got more than 90% of the vote.
+
+
+```python
+uselections["prop"] = uselections["candidatevotes"]/uselections["totalvotes"]
+```
+
+---
+
+# Handy utility functions
+
+**`sort_values()`**
+
+
+```python
+uselections.sort_values("state")
+```
+
+**`value_counts()`**
+
+
+```python
+uselections["year"].value_counts()
+```
+
+**`unique()`**
+
+
+
+**`sample()`**
+
+
+
+
+---
+
+# Practice: Question 2
+
+
+---
+
+# Practice: Question 2
+
+Which candidates were on the ballot in California in 2016?
+
+
+```python
+uselections["candidate"].unique()
+```
+
+```
+## array(['Al Gore', 'George W. Bush', 'Ralph Nader', 'Other', 'John Kerry',
+##        'Barack Obama', 'John McCain', 'Mitt Romney', 'Hillary Clinton',
+##        'Donald Trump'], dtype=object)
+```
+
+```python
+mask = (uselections["year"] == 2016) &amp; (uselections["state_po"] == "CA")
+uselections[mask]["candidate"].unique()
+```
+
+```
+## array(['Hillary Clinton', 'Donald Trump', 'Other'], dtype=object)
+```
+
+
+---
+
+# Practice: Question 3
+
+Which were the top 5 counties in California in 2016 in the proportion of the vote won by Hillary Clinton?
+
+
+```python
+mask = (uselections["year"] == 2016) &amp; (uselections["state_po"] == "CA") &amp; (uselections["candidate"] == "Hillary Clinton")
+df = uselections[mask]
+df.sort_values("prop", ascending = False)["county"].head(5)
+```
+
+```
+## 41099    San Francisco
+## 40988          Alameda
+## 41048            Marin
+## 41108        San Mateo
+## 41117       Santa Cruz
+## Name: county, dtype: object
+```
+
+
+---
+
+# Groupby
+--
+
+For separate operations on subsets of the data frame, use *grouped* operations.
+
+
+```python
+uselections.groupby("year")
+```
+
+--
+
+
+```
+## &lt;pandas.core.groupby.generic.DataFrameGroupBy object at 0x7fdf8c131978&gt;
+```
+
+---
 
 
 

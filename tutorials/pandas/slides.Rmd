@@ -2,7 +2,7 @@
 title: "Pandas II"
 subtitle: "group by"
 author: "Andrew Bray"
-output:
+output: 
   xaringan::moon_reader:
     css: xaringan-themer.css
     lib_dir: libs
@@ -20,21 +20,20 @@ knitr::opts_chunk$set(warning = FALSE,
 source("https://raw.githubusercontent.com/andrewpbray/stitched/master/demos/slides_css.R")
 ```
 
-
 # Agenda
 
-1. Review
-2. Stuff
-3. Group by
-
+1.  Review
+2.  Stuff
+3.  Group by
 
 ---
+
 # US Elections Data
 --
 
-- From MIT Elections Lab
-- County-level Data
-- President elections 2000 - 2016
+-   From MIT Elections Lab
+-   County-level Data
+-   President elections 2000 - 2016
 
 ```{r r-setup}
 # remotes::install_github("andrewpbray/boxofdata")
@@ -46,7 +45,9 @@ names(uselections)
 ```
 
 ---
+
 # US Elections Data, cont.
+--
 
 ```{r, echo = FALSE}
 select(uselections, -state_po, -FIPS, -office, -version) %>%
@@ -54,7 +55,9 @@ select(uselections, -state_po, -FIPS, -office, -version) %>%
   kable()
 ```
 
+
 ---
+
 # Into Python
 --
 
@@ -68,70 +71,80 @@ uselections.dtypes
 
 
 ---
+
 # Select columns
+
+**Method 1:**  Pass a *string* into `[]`...
+
 --
 
-**Method 1:** Pass a *string* into `[]`...
-
---
-
-```{python series, eval = FALSE}
+```{python select1, eval = FALSE}
 uselections["county"]
 ```
 
 --
 
-```{python ref.label = "series", echo = FALSE}
+```{python ref.label = "select1", echo = FALSE}
 ```
+
 --
 
 ... get out a series.
 
 
 ---
+
 # Select columns
 
 **Method 2:** Pass a *list* into `[]`...
 
 --
 
-```{python df, eval = FALSE}
+```{python select2, eval = FALSE}
 uselections[["county"]]
 ```
 
 --
 
-```{python ref.label = "df", echo = FALSE}
+```{python ref.label = "select2", echo = FALSE}
 ```
+
 --
 
-... get out a dataframe.
+... get out a data frame.
+
 
 ---
-# Slice rows
+
+# Slicing rows
 --
 
-Pass a *slice* into `[]`...
+**Method 1:** Pass a *slice* into `[]`...
 
-```{python rows, eval = FALSE}
+--
+
+```{python slice1, eval = FALSE}
 uselections[0:5]
 ```
 
 --
-```{python ref.label = "rows", echo = FALSE}
+
+```{python ref.label = "slice1", echo = FALSE}
 ```
+
 --
 
-...get out a slice of rows. Does this terminology sound familiar?
+... get out a slice data frame. Sound familiar?
 
 --
 
 ```{r}
-dplyr::slice(uselections, 1:2)
+slice(uselections, 1:2)
 ```
 
 
 ---
+
 # Selecting and slicing
 --
 
@@ -142,11 +155,13 @@ uselections.loc[0:5, ["county"]]
 ```
 
 --
+
 ```{python ref.label = "colandrow", echo = FALSE}
 ```
 
 
 ---
+
 # Selecting and slicing
 --
 
@@ -157,6 +172,7 @@ uselections.columns
 ```
 
 --
+
 ```{python ref.label = "checkcols", echo = FALSE}
 ```
 
@@ -167,10 +183,13 @@ uselections.iloc[0:5, 3]
 ```
 
 --
+
 ```{python ref.label = "colandrow2", echo = FALSE}
 ```
 
+
 ---
+
 # Filtering rows
 --
 
@@ -180,6 +199,7 @@ You can apply a Boolean series as a mask.
 mask = uselections["year"] == 2016
 uselections[mask]
 ```
+
 --
 
 ```{python ref.label = "boolrows", echo = FALSE}
@@ -187,23 +207,8 @@ uselections[mask]
 
 
 ---
-# Filtering rows
 
-FYI: use `.isin` to mask based on set membership.
-
-```{python isin, eval = FALSE}
-mask = uselections["year"].isin([2012, 2016])
-uselections[mask]
-```
---
-
-```{python ref.label = "isin", echo = FALSE}
-```
-
-
----
-# Filtering rows and selecting columns
---
+## Filtering rows and selecting columns
 
 Boolean mask plus a list of columns.
 
@@ -222,15 +227,155 @@ Will this run?
 mask = uselections["year"].isin([2012, 2016])
 uselections.loc[mask, ["county", "state"]] #<<
 ```
+
 --
 
 ```{python ref.label = "boolandcolsb", echo = FALSE}
 ```
 
+
 ---
-# Adding a column
+
+### Let's shine that up.
+
+1.  Form data frame.
+2.  Apply `.agg()` method.
+3.  Pass as the aggregation function the string method to `.join`.
+
 --
 
+```{python shincol, eval = TRUE}
+
+```
+
+---
+
+# Pandas Inventory
+
+Now we know how to:
+
+1. Select columns
+--
+
+2. Slice rows
+--
+
+3. Do both simultaneously
+--
+
+4. Filter rows using boolean masks
+--
+
+5. Add columns
+
+
+---
+
+# Practice: Question 1
+
+---
+
+# Practice: Question 1
+
+Extract the first three rows where the candidate got more than 90% of the vote.
+
+```{python q1}
+uselections["prop"] = uselections["candidatevotes"]/uselections["totalvotes"]
+```
+
+---
+
+# Handy utility functions
+
+**`sort_values()`**
+
+```{python eval = FALSE}
+uselections.sort_values("state")
+```
+
+**`value_counts()`**
+
+```{python, eval = FALSE}
+uselections["year"].value_counts()
+```
+
+**`unique()`**
+
+```{python}
+
+```
+
+**`sample()`**
+
+```{python}
+
+```
+
+
+---
+
+# Practice: Question 2
+
+
+---
+
+# Practice: Question 2
+
+Which candidates were on the ballot in California in 2016?
+
+```{python q2}
+uselections["candidate"].unique()
+mask = (uselections["year"] == 2016) & (uselections["state_po"] == "CA")
+uselections[mask]["candidate"].unique()
+```
+
+
+---
+
+# Practice: Question 3
+
+Which were the top 5 counties in California in 2016 in the proportion of the vote won by Hillary Clinton?
+
+```{python}
+mask = (uselections["year"] == 2016) & (uselections["state_po"] == "CA") & (uselections["candidate"] == "Hillary Clinton")
+df = uselections[mask]
+df.sort_values("prop", ascending = False)["county"].head(5)
+```
+
+
+---
+
+# Groupby
+--
+
+For separate operations on subsets of the data frame, use *grouped* operations.
+
+```{python gb, eval = FALSE}
+uselections.groupby("year")
+```
+
+--
+
+```{python ref.label = "gb", echo = FALSE}
+
+```
+
+--
+
+```{python gbtot, eval = FALSE}
+uselections.groupby("year").agg(sum)
+```
+
+--
+
+```{python ref.label = "gbtot", echo = FALSE}
+
+```
+
+
+---
+
+# Practice: Question 4
 
 
 
