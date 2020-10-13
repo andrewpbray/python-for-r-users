@@ -1,0 +1,172 @@
+---
+title: "Pandas II"
+subtitle: "group by"
+author: "Andrew Bray"
+output: html_document
+editor_options: 
+  chunk_output_type: inline
+---
+
+# Agenda
+
+1.  Review
+2.  Stuff
+3.  Group by
+
+# US Elections Data
+
+This is county-level data from the presidential elections between 2000 and 2016, provided by the MIT Elections Lab.
+
+```{r}
+# remotes::install_github("andrewpbray/boxofdata")
+library(boxofdata)
+library(tidyverse)
+data(uselections)
+dim(uselections)
+names(uselections)
+str(uselections)
+```
+
+### Bringing the data into Python
+
+We bring the data into Python and do the our Python equivalent of greeing our data.
+
+```{python}
+import pandas as pd
+uselections = r.uselections
+uselections.shape
+uselections.columns
+uselections.dtypes
+```
+
+### Select columns
+
+**Method 1:** Pass a *string* into `[]`...
+
+```{python}
+uselections["county"]
+```
+
+... get out a series.
+
+**Method 2:** Pass a *list* into `[]`...
+
+```{python}
+uselections[["county"]]
+```
+
+... get out a data frame.
+
+### Slicing rows
+
+Pass a *slice* into `[]`...
+
+```{python}
+uselections[0:5]
+```
+
+... get out a slice of a data frame. Sound familiar?
+
+```{r}
+slice(uselections, 1:2)
+```
+
+### Selecting and slicing
+
+**Method 1:** (preferred) access labels with `.loc`.
+
+```{python}
+uselections.loc[0:5, ["county"]]
+```
+
+**Method 2:** access integer indices with `.iloc`.
+
+```{python}
+uselections.columns
+uselections.iloc[0:5, 3]
+```
+
+### Filtering rows
+
+You can apply a Boolean series as a mask.
+
+```{python boolrows, eval = FALSE}
+mask = uselections["year"] == 2016
+uselections[mask]
+```
+
+```{python ref.label = "boolrows", echo = FALSE}
+```
+
+## Filtering rows and selecting columns
+
+Boolean mask plus a list of columns.
+
+```{python boolandcolsa, eval = FALSE}
+mask = uselections["year"].isin([2012, 2016])
+uselections[mask, ["county", "state"]]
+```
+
+Will this run?
+
+> Need to use `.loc`
+
+```{python boolandcolsb, eval = FALSE}
+mask = uselections["year"].isin([2012, 2016])
+uselections.loc[mask, ["county", "state"]] #<<
+```
+
+```{python ref.label = "boolandcolsb", echo = FALSE}
+```
+
+### Let's shine that up.
+
+1.  Form data frame.
+2.  Apply `.agg()` method.
+3.  Pass as the aggregation function the string method to `.join`.
+
+```{python shincol, eval = TRUE}
+
+```
+
+# Pandas Inventory
+
+Now we know how to:
+
+1.  Select columns
+
+2.  Slice rows
+
+3.  Do both simultaneously
+
+4.  Filter rows using boolean masks
+
+5.  Add columns
+
+# Practice: Question 1
+
+# Handy utility functions
+
+**`sort_values()`**
+
+```{python eval = FALSE}
+uselections.sort_values("state")
+```
+
+**`value_counts()`**
+
+```{python, eval = FALSE}
+uselections["year"].value_counts()
+```
+
+**`unique()`**
+
+```{python}
+
+```
+
+**`sample()`**
+
+```{python}
+
+```
