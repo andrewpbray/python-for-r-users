@@ -1,0 +1,25 @@
+---
+title: "Practice"
+output: html_document
+---
+
+```{r r-setup}
+# remotes::install_github("andrewpbray/boxofdata")
+library(boxofdata)
+library(reticulate)
+data(uselections)
+```
+
+```{python py-setup}
+import pandas as pd
+uselections = r.uselections
+```
+
+### Question 1
+
+Extract the first three rows where the candidate got more than 90% of the vote.
+
+```{python}
+uselections["prop"] = uselections["candidatevotes"]/uselections["totalvotes"]
+uselections["prop"].describe()
+```

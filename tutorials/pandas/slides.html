@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Pandas II</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Andrew Bray" />
+    <script src="libs/header-attrs-2.4/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Pandas II
+## group by
+### Andrew Bray
+
+---
+
+
+
+
+
+# Agenda
+
+1. Review
+2. Stuff
+3. Group by
+
+
+---
+# US Elections Data
+--
+
+- From MIT Elections Lab
+- County-level Data
+- President elections 2000 - 2016
+
+
+```r
+# remotes::install_github("andrewpbray/boxofdata")
+library(boxofdata)
+library(tidyverse)
+data(uselections)
+dim(uselections)
+```
+
+```
+## [1] 50524    11
+```
+
+```r
+names(uselections)
+```
+
+```
+##  [1] "year"           "state"          "state_po"       "county"        
+##  [5] "FIPS"           "office"         "candidate"      "party"         
+##  [9] "candidatevotes" "totalvotes"     "version"
+```
+
+---
+# US Elections Data, cont.
+
+
+| year|state   |county  |candidate      |party      | candidatevotes| totalvotes|
+|----:|:-------|:-------|:--------------|:----------|--------------:|----------:|
+| 2000|Alabama |Autauga |Al Gore        |democrat   |           4942|      17208|
+| 2000|Alabama |Autauga |George W. Bush |republican |          11993|      17208|
+| 2000|Alabama |Autauga |Ralph Nader    |green      |            160|      17208|
+| 2000|Alabama |Autauga |Other          |NA         |            113|      17208|
+| 2000|Alabama |Baldwin |Al Gore        |democrat   |          13997|      56480|
+| 2000|Alabama |Baldwin |George W. Bush |republican |          40872|      56480|
+| 2000|Alabama |Baldwin |Ralph Nader    |green      |           1033|      56480|
+| 2000|Alabama |Baldwin |Other          |NA         |            578|      56480|
+
+---
+# Into Python
+--
+
+
+```python
+import pandas as pd
+uselections = r.uselections
+uselections.shape
+```
+
+```
+## (50524, 11)
+```
+
+```python
+uselections.columns
+```
+
+```
+## Index(['year', 'state', 'state_po', 'county', 'FIPS', 'office', 'candidate',
+##        'party', 'candidatevotes', 'totalvotes', 'version'],
+##       dtype='object')
+```
+
+```python
+uselections.dtypes
+```
+
+```
+## year              float64
+## state              object
+## state_po           object
+## county             object
+## FIPS              float64
+## office             object
+## candidate          object
+## party              object
+## candidatevotes    float64
+## totalvotes        float64
+## version           float64
+## dtype: object
+```
+
+
+---
+# Select columns
+--
+
+**Method 1:** Pass a *string* into `[]`...
+
+--
+
+
+```python
+uselections["county"]
+```
+
+--
+
+
+```
+## 0            Autauga
+## 1            Autauga
+## 2            Autauga
+## 3            Autauga
+## 4            Baldwin
+##             ...     
+## 50519    District 40
+## 50520    District 40
+## 50521    District 99
+## 50522    District 99
+## 50523    District 99
+## Name: county, Length: 50524, dtype: object
+```
+--
+
+... get out a series.
+
+
+---
+# Select columns
+
+**Method 2:** Pass a *list* into `[]`...
+
+--
+
+
+```python
+uselections[["county"]]
+```
+
+--
+
+
+```
+##             county
+## 0          Autauga
+## 1          Autauga
+## 2          Autauga
+## 3          Autauga
+## 4          Baldwin
+## ...            ...
+## 50519  District 40
+## 50520  District 40
+## 50521  District 99
+## 50522  District 99
+## 50523  District 99
+## 
+## [50524 rows x 1 columns]
+```
+--
+
+... get out a dataframe.
+
+---
+# Slice rows
+--
+
+Pass a *slice* into `[]`...
+
+
+```python
+uselections[0:5]
+```
+
+--
+
+```
+##      year    state state_po  ... candidatevotes  totalvotes     version
+## 0  2000.0  Alabama       AL  ...         4942.0     17208.0  20191203.0
+## 1  2000.0  Alabama       AL  ...        11993.0     17208.0  20191203.0
+## 2  2000.0  Alabama       AL  ...          160.0     17208.0  20191203.0
+## 3  2000.0  Alabama       AL  ...          113.0     17208.0  20191203.0
+## 4  2000.0  Alabama       AL  ...        13997.0     56480.0  20191203.0
+## 
+## [5 rows x 11 columns]
+```
+--
+
+...get out a slice of rows. Does this terminology sound familiar?
+
+--
+
+
+```r
+dplyr::slice(uselections, 1:2)
+```
+
+```
+## # A tibble: 2 x 11
+##    year state state_po county  FIPS office candidate party candidatevotes
+##   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;          &lt;dbl&gt;
+## 1  2000 Alab… AL       Autau…  1001 Presi… Al Gore   demo…           4942
+## 2  2000 Alab… AL       Autau…  1001 Presi… George W… repu…          11993
+## # … with 2 more variables: totalvotes &lt;dbl&gt;, version &lt;dbl&gt;
+```
+
+
+---
+# Selecting and slicing
+--
+
+**Method 1:** (preferred) access labels with `.loc`.
+
+
+```python
+uselections.loc[0:5, ["county"]]
+```
+
+--
+
+```
+##     county
+## 0  Autauga
+## 1  Autauga
+## 2  Autauga
+## 3  Autauga
+## 4  Baldwin
+## 5  Baldwin
+```
+
+
+---
+# Selecting and slicing
+--
+
+**Method 2:** access integer indices with `.iloc`.
+
+
+```python
+uselections.columns
+```
+
+--
+
+```
+## Index(['year', 'state', 'state_po', 'county', 'FIPS', 'office', 'candidate',
+##        'party', 'candidatevotes', 'totalvotes', 'version'],
+##       dtype='object')
+```
+
+--
+
+
+```python
+uselections.iloc[0:5, 3]
+```
+
+--
+
+```
+## 0    Autauga
+## 1    Autauga
+## 2    Autauga
+## 3    Autauga
+## 4    Baldwin
+## Name: county, dtype: object
+```
+
+---
+# Filtering rows
+--
+
+You can apply a Boolean series as a mask.
+
+
+```python
+mask = uselections["year"] == 2016
+uselections[mask]
+```
+--
+
+
+```
+##          year    state state_po  ... candidatevotes  totalvotes     version
+## 40517  2016.0  Alabama       AL  ...         5936.0     24973.0  20191203.0
+## 40518  2016.0  Alabama       AL  ...        18172.0     24973.0  20191203.0
+## 40519  2016.0  Alabama       AL  ...          865.0     24973.0  20191203.0
+## 40520  2016.0  Alabama       AL  ...        18458.0     95215.0  20191203.0
+## 40521  2016.0  Alabama       AL  ...        72883.0     95215.0  20191203.0
+## ...       ...      ...      ...  ...            ...         ...         ...
+## 50519  2016.0   Alaska       AK  ...         1377.0      4610.0  20191203.0
+## 50520  2016.0   Alaska       AK  ...          895.0      4610.0  20191203.0
+## 50521  2016.0   Alaska       NA  ...          274.0      5056.0  20191203.0
+## 50522  2016.0   Alaska       NA  ...           40.0      5056.0  20191203.0
+## 50523  2016.0   Alaska       NA  ...           28.0      5056.0  20191203.0
+## 
+## [9474 rows x 11 columns]
+```
+
+
+---
+# Filtering rows
+
+FYI: use `.isin` to mask based on set membership.
+
+
+```python
+mask = uselections["year"].isin([2012, 2016])
+uselections[mask]
+```
+--
+
+
+```
+##          year    state state_po  ... candidatevotes  totalvotes     version
+## 31166  2012.0  Alabama       AL  ...         6363.0     23932.0  20191203.0
+## 31167  2012.0  Alabama       AL  ...        17379.0     23932.0  20191203.0
+## 31168  2012.0  Alabama       AL  ...          190.0     23932.0  20191203.0
+## 31169  2012.0  Alabama       AL  ...        18424.0     85338.0  20191203.0
+## 31170  2012.0  Alabama       AL  ...        66016.0     85338.0  20191203.0
+## ...       ...      ...      ...  ...            ...         ...         ...
+## 50519  2016.0   Alaska       AK  ...         1377.0      4610.0  20191203.0
+## 50520  2016.0   Alaska       AK  ...          895.0      4610.0  20191203.0
+## 50521  2016.0   Alaska       NA  ...          274.0      5056.0  20191203.0
+## 50522  2016.0   Alaska       NA  ...           40.0      5056.0  20191203.0
+## 50523  2016.0   Alaska       NA  ...           28.0      5056.0  20191203.0
+## 
+## [18948 rows x 11 columns]
+```
+
+
+---
+# Filtering rows and selecting columns
+--
+
+Boolean mask plus a list of columns.
+
+
+```python
+mask = uselections["year"].isin([2012, 2016])
+uselections[mask, ["county", "state"]]
+```
+
+Will this run?
+
+--
+
+&gt; Need to use `.loc`
+
+
+```python
+mask = uselections["year"].isin([2012, 2016])
+*uselections.loc[mask, ["county", "state"]]
+```
+--
+
+
+```
+##             county    state
+## 31166      Autauga  Alabama
+## 31167      Autauga  Alabama
+## 31168      Autauga  Alabama
+## 31169      Baldwin  Alabama
+## 31170      Baldwin  Alabama
+## ...            ...      ...
+## 50519  District 40   Alaska
+## 50520  District 40   Alaska
+## 50521  District 99   Alaska
+## 50522  District 99   Alaska
+## 50523  District 99   Alaska
+## 
+## [18948 rows x 2 columns]
+```
+
+---
+# Adding a column
+--
+
+
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "atelier-forest-light",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

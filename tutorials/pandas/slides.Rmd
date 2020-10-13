@@ -1,0 +1,239 @@
+---
+title: "Pandas II"
+subtitle: "group by"
+author: "Andrew Bray"
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    lib_dir: libs
+    nature:
+      highlightStyle: atelier-forest-light
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(warning = FALSE,
+                      message = FALSE)
+source("https://raw.githubusercontent.com/andrewpbray/stitched/master/demos/slides_css.R")
+```
+
+
+# Agenda
+
+1. Review
+2. Stuff
+3. Group by
+
+
+---
+# US Elections Data
+--
+
+- From MIT Elections Lab
+- County-level Data
+- President elections 2000 - 2016
+
+```{r r-setup}
+# remotes::install_github("andrewpbray/boxofdata")
+library(boxofdata)
+library(tidyverse)
+data(uselections)
+dim(uselections)
+names(uselections)
+```
+
+---
+# US Elections Data, cont.
+
+```{r, echo = FALSE}
+select(uselections, -state_po, -FIPS, -office, -version) %>%
+  head(8) %>%
+  kable()
+```
+
+---
+# Into Python
+--
+
+```{python}
+import pandas as pd
+uselections = r.uselections
+uselections.shape
+uselections.columns
+uselections.dtypes
+```
+
+
+---
+# Select columns
+--
+
+**Method 1:** Pass a *string* into `[]`...
+
+--
+
+```{python series, eval = FALSE}
+uselections["county"]
+```
+
+--
+
+```{python ref.label = "series", echo = FALSE}
+```
+--
+
+... get out a series.
+
+
+---
+# Select columns
+
+**Method 2:** Pass a *list* into `[]`...
+
+--
+
+```{python df, eval = FALSE}
+uselections[["county"]]
+```
+
+--
+
+```{python ref.label = "df", echo = FALSE}
+```
+--
+
+... get out a dataframe.
+
+---
+# Slice rows
+--
+
+Pass a *slice* into `[]`...
+
+```{python rows, eval = FALSE}
+uselections[0:5]
+```
+
+--
+```{python ref.label = "rows", echo = FALSE}
+```
+--
+
+...get out a slice of rows. Does this terminology sound familiar?
+
+--
+
+```{r}
+dplyr::slice(uselections, 1:2)
+```
+
+
+---
+# Selecting and slicing
+--
+
+**Method 1:** (preferred) access labels with `.loc`.
+
+```{python colandrow, eval = FALSE}
+uselections.loc[0:5, ["county"]]
+```
+
+--
+```{python ref.label = "colandrow", echo = FALSE}
+```
+
+
+---
+# Selecting and slicing
+--
+
+**Method 2:** access integer indices with `.iloc`.
+
+```{python checkcols, eval = FALSE}
+uselections.columns
+```
+
+--
+```{python ref.label = "checkcols", echo = FALSE}
+```
+
+--
+
+```{python colandrow2, eval = FALSE}
+uselections.iloc[0:5, 3]
+```
+
+--
+```{python ref.label = "colandrow2", echo = FALSE}
+```
+
+---
+# Filtering rows
+--
+
+You can apply a Boolean series as a mask.
+
+```{python boolrows, eval = FALSE}
+mask = uselections["year"] == 2016
+uselections[mask]
+```
+--
+
+```{python ref.label = "boolrows", echo = FALSE}
+```
+
+
+---
+# Filtering rows
+
+FYI: use `.isin` to mask based on set membership.
+
+```{python isin, eval = FALSE}
+mask = uselections["year"].isin([2012, 2016])
+uselections[mask]
+```
+--
+
+```{python ref.label = "isin", echo = FALSE}
+```
+
+
+---
+# Filtering rows and selecting columns
+--
+
+Boolean mask plus a list of columns.
+
+```{python boolandcolsa, eval = FALSE}
+mask = uselections["year"].isin([2012, 2016])
+uselections[mask, ["county", "state"]]
+```
+
+Will this run?
+
+--
+
+> Need to use `.loc`
+
+```{python boolandcolsb, eval = FALSE}
+mask = uselections["year"].isin([2012, 2016])
+uselections.loc[mask, ["county", "state"]] #<<
+```
+--
+
+```{python ref.label = "boolandcolsb", echo = FALSE}
+```
+
+---
+# Adding a column
+--
+
+
+
+
+
+
+
