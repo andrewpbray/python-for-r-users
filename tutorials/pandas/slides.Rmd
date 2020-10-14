@@ -357,7 +357,6 @@ uselections.groupby("year")
 --
 
 ```{python ref.label = "gb", echo = FALSE}
-
 ```
 
 --
@@ -369,7 +368,6 @@ uselections.groupby("year").agg(sum)
 --
 
 ```{python ref.label = "gbtot", echo = FALSE}
-
 ```
 
 
@@ -377,7 +375,11 @@ uselections.groupby("year").agg(sum)
 
 # Practice: Question 4
 
+For each county in California in 2016, calculate the proportion of votes for each major party candidate.
 
+```{python}
+
+```
 
 
 
