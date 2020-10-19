@@ -53,9 +53,9 @@ names(uselections)
 ```
 
 ```
-##  [1] "year"           "state"          "state_po"       "county"         "FIPS"          
-##  [6] "office"         "candidate"      "party"          "candidatevotes" "totalvotes"    
-## [11] "version"
+##  [1] "year"           "state"          "state_po"       "county"        
+##  [5] "FIPS"           "office"         "candidate"      "party"         
+##  [9] "candidatevotes" "totalvotes"     "version"
 ```
 
 ---
@@ -237,10 +237,11 @@ slice(uselections, 1:2)
 
 ```
 ## # A tibble: 2 x 11
-##    year state  state_po county   FIPS office candidate  party  candidatevotes totalvotes version
-##   &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;           &lt;dbl&gt;      &lt;dbl&gt;   &lt;dbl&gt;
-## 1  2000 Alaba… AL       Autauga  1001 Presi… Al Gore    democ…           4942      17208  2.02e7
-## 2  2000 Alaba… AL       Autauga  1001 Presi… George W.… repub…          11993      17208  2.02e7
+##    year state state_po county  FIPS office candidate party candidatevotes
+##   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;chr&gt;          &lt;dbl&gt;
+## 1  2000 Alab… AL       Autau…  1001 Presi… Al Gore   demo…           4942
+## 2  2000 Alab… AL       Autau…  1001 Presi… George W… repu…          11993
+## # … with 2 more variables: totalvotes &lt;dbl&gt;, version &lt;dbl&gt;
 ```
 
 
@@ -536,10 +537,35 @@ uselections.groupby("year")
 
 
 ```
-## &lt;pandas.core.groupby.generic.DataFrameGroupBy object at 0x7fdf8c131978&gt;
+## &lt;pandas.core.groupby.generic.DataFrameGroupBy object at 0x7f8e001917f0&gt;
 ```
 
+--
+
+
+```python
+uselections.groupby("year").agg(sum)
+```
+
+--
+
+
+```
+##                FIPS  candidatevotes   totalvotes       version         prop
+## year                                                                       
+## 2000.0  382202048.0     105411375.0  421645500.0  2.549745e+11  3152.000000
+## 2004.0  286675578.0     122320549.0  366961647.0  1.912915e+11  3154.000000
+## 2008.0  286675578.0     131187337.0  393562011.0  1.912915e+11  3154.000000
+## 2012.0  286675578.0     129094316.0  387949353.0  1.912915e+11  3155.000000
+## 2016.0  286675578.0     136495547.0  409605462.0  1.912915e+11  3152.918886
+```
+
+
 ---
+
+# Practice: Question 4
+
+For each county in California in 2016, calculate the proportion of votes for each major party candidate.
 
 
 
