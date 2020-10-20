@@ -9,9 +9,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Andrew Bray" />
 
 
-<title>notebook.utf8</title>
+<title>Pandas II</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -383,14 +384,13 @@ summary {
 
 
 
+<h1 class="title toc-ignore">Pandas II</h1>
+<h3 class="subtitle">group by</h3>
+<h4 class="author">Andrew Bray</h4>
 
 </div>
 
 
-<ul>
-<li>title: “Pandas II” subtitle: “group by” author: “Andrew Bray” output: html_document: css: xaringan-themer.css</li>
-<li></li>
-</ul>
 <div id="agenda" class="section level1">
 <h1>Agenda</h1>
 <ol style="list-style-type: decimal">
@@ -401,114 +401,55 @@ summary {
 </div>
 <div id="us-elections-data" class="section level1">
 <h1>US Elections Data</h1>
-<ul>
-<li>From MIT Elections Lab</li>
-<li>County-level Data</li>
-<li>President elections 2000 - 2016</li>
-</ul>
+<p>This is county-level data from the presidential elections between 2000 and 2016, provided by the MIT Elections Lab.</p>
 <pre class="r"><code># remotes::install_github(&quot;andrewpbray/boxofdata&quot;)
 library(boxofdata)
-library(tidyverse)
-data(uselections)
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
+## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
+## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
+## ✓ readr   1.4.0     ✓ forcats 0.5.0</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>data(uselections)
 dim(uselections)</code></pre>
 <pre><code>## [1] 50524    11</code></pre>
 <pre class="r"><code>names(uselections)</code></pre>
 <pre><code>##  [1] &quot;year&quot;           &quot;state&quot;          &quot;state_po&quot;       &quot;county&quot;        
 ##  [5] &quot;FIPS&quot;           &quot;office&quot;         &quot;candidate&quot;      &quot;party&quot;         
 ##  [9] &quot;candidatevotes&quot; &quot;totalvotes&quot;     &quot;version&quot;</code></pre>
-</div>
-<div id="us-elections-data-cont." class="section level1">
-<h1>US Elections Data, cont.</h1>
-<table>
-<thead>
-<tr class="header">
-<th align="right">year</th>
-<th align="left">state</th>
-<th align="left">county</th>
-<th align="left">candidate</th>
-<th align="left">party</th>
-<th align="right">candidatevotes</th>
-<th align="right">totalvotes</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="right">2000</td>
-<td align="left">Alabama</td>
-<td align="left">Autauga</td>
-<td align="left">Al Gore</td>
-<td align="left">democrat</td>
-<td align="right">4942</td>
-<td align="right">17208</td>
-</tr>
-<tr class="even">
-<td align="right">2000</td>
-<td align="left">Alabama</td>
-<td align="left">Autauga</td>
-<td align="left">George W. Bush</td>
-<td align="left">republican</td>
-<td align="right">11993</td>
-<td align="right">17208</td>
-</tr>
-<tr class="odd">
-<td align="right">2000</td>
-<td align="left">Alabama</td>
-<td align="left">Autauga</td>
-<td align="left">Ralph Nader</td>
-<td align="left">green</td>
-<td align="right">160</td>
-<td align="right">17208</td>
-</tr>
-<tr class="even">
-<td align="right">2000</td>
-<td align="left">Alabama</td>
-<td align="left">Autauga</td>
-<td align="left">Other</td>
-<td align="left">NA</td>
-<td align="right">113</td>
-<td align="right">17208</td>
-</tr>
-<tr class="odd">
-<td align="right">2000</td>
-<td align="left">Alabama</td>
-<td align="left">Baldwin</td>
-<td align="left">Al Gore</td>
-<td align="left">democrat</td>
-<td align="right">13997</td>
-<td align="right">56480</td>
-</tr>
-<tr class="even">
-<td align="right">2000</td>
-<td align="left">Alabama</td>
-<td align="left">Baldwin</td>
-<td align="left">George W. Bush</td>
-<td align="left">republican</td>
-<td align="right">40872</td>
-<td align="right">56480</td>
-</tr>
-<tr class="odd">
-<td align="right">2000</td>
-<td align="left">Alabama</td>
-<td align="left">Baldwin</td>
-<td align="left">Ralph Nader</td>
-<td align="left">green</td>
-<td align="right">1033</td>
-<td align="right">56480</td>
-</tr>
-<tr class="even">
-<td align="right">2000</td>
-<td align="left">Alabama</td>
-<td align="left">Baldwin</td>
-<td align="left">Other</td>
-<td align="left">NA</td>
-<td align="right">578</td>
-<td align="right">56480</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div id="into-python" class="section level1">
-<h1>Into Python</h1>
+<pre class="r"><code>str(uselections)</code></pre>
+<pre><code>## tibble [50,524 × 11] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+##  $ year          : num [1:50524] 2000 2000 2000 2000 2000 2000 2000 2000 2000 2000 ...
+##  $ state         : chr [1:50524] &quot;Alabama&quot; &quot;Alabama&quot; &quot;Alabama&quot; &quot;Alabama&quot; ...
+##  $ state_po      : chr [1:50524] &quot;AL&quot; &quot;AL&quot; &quot;AL&quot; &quot;AL&quot; ...
+##  $ county        : chr [1:50524] &quot;Autauga&quot; &quot;Autauga&quot; &quot;Autauga&quot; &quot;Autauga&quot; ...
+##  $ FIPS          : num [1:50524] 1001 1001 1001 1001 1003 ...
+##  $ office        : chr [1:50524] &quot;President&quot; &quot;President&quot; &quot;President&quot; &quot;President&quot; ...
+##  $ candidate     : chr [1:50524] &quot;Al Gore&quot; &quot;George W. Bush&quot; &quot;Ralph Nader&quot; &quot;Other&quot; ...
+##  $ party         : chr [1:50524] &quot;democrat&quot; &quot;republican&quot; &quot;green&quot; NA ...
+##  $ candidatevotes: num [1:50524] 4942 11993 160 113 13997 ...
+##  $ totalvotes    : num [1:50524] 17208 17208 17208 17208 56480 ...
+##  $ version       : num [1:50524] 20191203 20191203 20191203 20191203 20191203 ...
+##  - attr(*, &quot;spec&quot;)=
+##   .. cols(
+##   ..   year = col_double(),
+##   ..   state = col_character(),
+##   ..   state_po = col_character(),
+##   ..   county = col_character(),
+##   ..   FIPS = col_double(),
+##   ..   office = col_character(),
+##   ..   candidate = col_character(),
+##   ..   party = col_character(),
+##   ..   candidatevotes = col_double(),
+##   ..   totalvotes = col_double(),
+##   ..   version = col_double()
+##   .. )</code></pre>
+<div id="bringing-the-data-into-python" class="section level3">
+<h3>Bringing the data into Python</h3>
+<p>We bring the data into Python and do the our Python equivalent of greeing our data.</p>
 <pre class="python"><code>import pandas as pd
 uselections = r.uselections
 uselections.shape</code></pre>
@@ -531,8 +472,8 @@ uselections.shape</code></pre>
 ## version           float64
 ## dtype: object</code></pre>
 </div>
-<div id="select-columns" class="section level1">
-<h1>Select columns</h1>
+<div id="select-columns" class="section level3">
+<h3>Select columns</h3>
 <p><strong>Method 1:</strong> Pass a <em>string</em> into <code>[]</code>…</p>
 <pre class="python"><code>uselections[&quot;county&quot;]</code></pre>
 <pre><code>## 0            Autauga
@@ -548,9 +489,6 @@ uselections.shape</code></pre>
 ## 50523    District 99
 ## Name: county, Length: 50524, dtype: object</code></pre>
 <p>… get out a series.</p>
-</div>
-<div id="select-columns-1" class="section level1">
-<h1>Select columns</h1>
 <p><strong>Method 2:</strong> Pass a <em>list</em> into <code>[]</code>…</p>
 <pre class="python"><code>uselections[[&quot;county&quot;]]</code></pre>
 <pre><code>##             county
@@ -569,9 +507,9 @@ uselections.shape</code></pre>
 ## [50524 rows x 1 columns]</code></pre>
 <p>… get out a data frame.</p>
 </div>
-<div id="slicing-rows" class="section level1">
-<h1>Slicing rows</h1>
-<p><strong>Method 1:</strong> Pass a <em>slice</em> into <code>[]</code>…</p>
+<div id="slicing-rows" class="section level3">
+<h3>Slicing rows</h3>
+<p>Pass a <em>slice</em> into <code>[]</code>…</p>
 <pre class="python"><code>uselections[0:5]</code></pre>
 <pre><code>##      year    state state_po  ... candidatevotes  totalvotes     version
 ## 0  2000.0  Alabama       AL  ...         4942.0     17208.0  20191203.0
@@ -581,7 +519,7 @@ uselections.shape</code></pre>
 ## 4  2000.0  Alabama       AL  ...        13997.0     56480.0  20191203.0
 ## 
 ## [5 rows x 11 columns]</code></pre>
-<p>… get out a slice data frame. Sound familiar?</p>
+<p>… get out a slice of a data frame. Sound familiar?</p>
 <pre class="r"><code>slice(uselections, 1:2)</code></pre>
 <pre><code>## # A tibble: 2 x 11
 ##    year state state_po county  FIPS office candidate party candidatevotes
@@ -590,8 +528,8 @@ uselections.shape</code></pre>
 ## 2  2000 Alab… AL       Autau…  1001 Presi… George W… repu…          11993
 ## # … with 2 more variables: totalvotes &lt;dbl&gt;, version &lt;dbl&gt;</code></pre>
 </div>
-<div id="selecting-and-slicing" class="section level1">
-<h1>Selecting and slicing</h1>
+<div id="selecting-and-slicing" class="section level3">
+<h3>Selecting and slicing</h3>
 <p><strong>Method 1:</strong> (preferred) access labels with <code>.loc</code>.</p>
 <pre class="python"><code>uselections.loc[0:5, [&quot;county&quot;]]</code></pre>
 <pre><code>##     county
@@ -601,9 +539,6 @@ uselections.shape</code></pre>
 ## 3  Autauga
 ## 4  Baldwin
 ## 5  Baldwin</code></pre>
-</div>
-<div id="selecting-and-slicing-1" class="section level1">
-<h1>Selecting and slicing</h1>
 <p><strong>Method 2:</strong> access integer indices with <code>.iloc</code>.</p>
 <pre class="python"><code>uselections.columns</code></pre>
 <pre><code>## Index([&#39;year&#39;, &#39;state&#39;, &#39;state_po&#39;, &#39;county&#39;, &#39;FIPS&#39;, &#39;office&#39;, &#39;candidate&#39;,
@@ -617,8 +552,8 @@ uselections.shape</code></pre>
 ## 4    Baldwin
 ## Name: county, dtype: object</code></pre>
 </div>
-<div id="filtering-rows" class="section level1">
-<h1>Filtering rows</h1>
+<div id="filtering-rows" class="section level3">
+<h3>Filtering rows</h3>
 <p>You can apply a Boolean series as a mask.</p>
 <pre class="python"><code>mask = uselections[&quot;year&quot;] == 2016
 uselections[mask]</code></pre>
@@ -636,6 +571,7 @@ uselections[mask]</code></pre>
 ## 50523  2016.0   Alaska       NA  ...           28.0      5056.0  20191203.0
 ## 
 ## [9474 rows x 11 columns]</code></pre>
+</div>
 <div id="filtering-rows-and-selecting-columns" class="section level2">
 <h2>Filtering rows and selecting columns</h2>
 <p>Boolean mask plus a list of columns.</p>

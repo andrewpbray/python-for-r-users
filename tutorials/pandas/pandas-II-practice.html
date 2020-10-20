@@ -390,23 +390,25 @@ summary {
 
 <pre class="r"><code># remotes::install_github(&quot;andrewpbray/boxofdata&quot;)
 library(boxofdata)
+library(reticulate)
 data(uselections)</code></pre>
 <pre class="python"><code>import pandas as pd
 uselections = r.uselections</code></pre>
 <div id="question-1" class="section level3">
 <h3>Question 1</h3>
 <p>Extract the first three rows where the candidate got more than 90% of the vote.</p>
-<pre class="python"><code>uselections[&quot;prop&quot;] = uselections[&quot;candidatevotes&quot;]/uselections[&quot;totalvotes&quot;]
-uselections[&quot;prop&quot;].describe()</code></pre>
-<pre><code>## count    50120.000000
-## mean         0.314603
-## std          0.264512
-## min          0.000000
-## 25%          0.022464
-## 50%          0.327248
-## 75%          0.539318
-## max          0.960334
-## Name: prop, dtype: float64</code></pre>
+</div>
+<div id="question-2" class="section level3">
+<h3>Question 2</h3>
+<p>Which candidates were on the ballot in California in 2016?</p>
+</div>
+<div id="question-3" class="section level3">
+<h3>Question 3</h3>
+<p>Which were the top 5 counties in California in 2016 in the proportion of the vote won by Hillary Clinton?</p>
+</div>
+<div id="question-4" class="section level3">
+<h3>Question 4</h3>
+<p>For each county in California in 2016, calculate the proportion of votes for each major party candidate.</p>
 </div>
 
 
