@@ -1,42 +1,33 @@
 ---
-title: "Pandas II"
-subtitle: "group by"
+title: "Pandas III"
+subtitle: ""
 author: "Andrew Bray"
-output: 
-  xaringan::moon_reader:
-    css: xaringan-themer.css
-    lib_dir: libs
-    nature:
-      highlightStyle: atelier-forest-light
-      highlightLines: true
-      highlightSpans: true
-      countIncrementalSlides: false
+output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
-
-```{r setup, include=FALSE}
-library(knitr)
-knitr::opts_chunk$set(warning = FALSE,
-                      message = FALSE)
-source("https://raw.githubusercontent.com/andrewpbray/stitched/master/demos/slides_css.R")
-```
 
 # Agenda
 
 1.  Comments on Assignments
-2.  Stuff
-3.  Group by
+2.  Reading in Data
+3.  String methods
+4.  Joins
 
----
+------------------------------------------------------------------------
 
-# Comments on Assignments
+## Comments on Assignments
 
-1. If you get at least 2/3 of the points, you get credit on the assignment.
-2. Don't forget to read throughly to find the question.
-3. Please tag the pages to the questions, including multiple pages for a single question.
+<img src="figs/flight-delay-evidence.png" width="400"/>
 
----
+1.  Be sure your code is visible in your pdf (no overflowing lines).
+2.  If you get at least 2/3 of the points, you get credit on the assignment.
+3.  Please tag the pages to the questions, including multiple pages for a single question.
+4.  Don't forget to read thoroughly to find the question.
 
-5. Repeat the exercise but print out the first four values of both `dest` and `origin` but pass them as a list into the square brackets. Try also passing only `dest` as a list. In general, what happens when you subset the columns with a string versus with a list?
+Example of a question requiring code and a written answer:
+
+> 5.  Repeat the exercise but print out the first four values of both `dest` and `origin` but pass them as a list into the square brackets. Try also passing only `dest` as a list. In general, what happens when you subset the columns with a string versus with a list?
 
 ```{python}
 flights[["dest", "origin"]].head(4)
@@ -44,362 +35,113 @@ flights[["dest"]].head(4)
 # subsetting with a string with yield a series; with a list yields a data frame
 ```
 
+------------------------------------------------------------------------
 
----
+## Reading / Writing Data
 
-# US Elections Data
---
-
--   From MIT Elections Lab
--   County-level Data
--   President elections 2000 - 2016
-
-```{r r-setup}
-# remotes::install_github("andrewpbray/boxofdata")
-library(boxofdata)
-library(tidyverse)
-data(uselections)
-dim(uselections)
-names(uselections)
-```
-
----
-
-# US Elections Data, cont.
---
-
-```{r, echo = FALSE}
-select(uselections, -state_po, -FIPS, -office, -version) %>%
-  head(8) %>%
-  kable()
-```
-
-
----
-
-# Into Python
---
+Let's return to the example of county level data from presidential elections between 2000 and 2016.
 
 ```{python}
 import pandas as pd
-uselections = r.uselections
-uselections.shape
-uselections.columns
-uselections.dtypes
+url = "https://raw.githubusercontent.com/andrewpbray/python-for-r-users/master/data/uselections.csv"
+uselections = pd.read_csv(url)
+View(uselections)
+?uselections
 ```
 
+Useful arguments to keep an eye out for:
 
----
+1.  `sep`: what is each data field separated by (can also use `delimiter`)
+2.  `header`: which row number has the columns names (or `none`)
+3.  `names`: list of columns names to use
+4.  `dtype`: dictionary of colname: type pairs for each column.
+5.  `index_col`: column to use as row labels when indexing.
 
-# Select columns
+To *write* a data frame to a .csv file, use `df.to_csv()` .
 
-**Method 1:**  Pass a *string* into `[]`...
+## String Methods
 
---
+Whenever you find yourself wanting to do operations on columns that contains strings, consider the methods available to you.
 
-```{python select1, eval = FALSE}
-uselections["county"]
+```{python}
+uselections["county"].str
+dir(uselections["county"].str)
+uselections["county"].str.swapcase()
 ```
 
---
+When you append `.str` to a Series, the methods available will operate element-wise down the columns.
 
-```{python ref.label = "select1", echo = FALSE}
+#### Question 1
+
+How many counties are called "Districts"?
+
+#### Question 2
+
+Return a new data frame that removes all rows containing data from a "District".
+
+#### Question 3
+
+Which counties have the greatest number of words in them? (recall that you can apply a normal function over an interable using `.apply`)
+
+## Joins
+
+Joins come into play when we want to utilize variables that are stored across multiple rectangular data files. Consider the following two mock data frames that each contain a different variable, `x` or `y`.
+
+```{python}
+df_1 = pd.DataFrame({"id": [1, 2, 3], "x":["x1", "x2", "x3"]})
+df_2 = pd.DataFrame({"id": [1, 2, 4], "y":["y1", "y2", "y3"]})
+df_1
+df_2
 ```
 
---
+We can collect the observations that have been made on both the `x` and `y` variable using `.merge()`.
 
-... get out a series.
-
-
----
-
-# Select columns
-
-**Method 2:** Pass a *list* into `[]`...
-
---
-
-```{python select2, eval = FALSE}
-uselections[["county"]]
+```{python}
+df_1.merge(df_2)
 ```
 
---
+<img src="figs/join-inner.png" width="400"/>
 
-```{python ref.label = "select2", echo = FALSE}
+```{python}
+?pandas.DataFrame.merge
 ```
 
---
+This is an example of an **inner join**. It's one of the four most common database-style data joins. The remaining three are examples of *outer joins*, and they generally result in more rows in the resulting data frame, but often induce missing values.
 
-... get out a data frame.
+1.  **Left Join**: Keeps everything in the "left" data frame and add on columns containing any additional data in the "right" data frame.
 
+    ```{python}
+    df_1.merge(df_2, how = "left")
+    ```
 
----
+2.  **Right Join**: Keeps everything in the "right" data frame and add on columns containing any additional data in the "left" data frame.
 
-# Slicing rows
---
+    ```{python}
+    df_1.merge(df_2, how = "right")
+    ```
 
-**Method 1:** Pass a *slice* into `[]`...
+    Note that this is pretty much the same result as a left join with "left" and "right" swapped.
 
---
+    ```{python}
+    df_2.merge(df_1, how = "left")
+    ```
 
-```{python slice1, eval = FALSE}
-uselections[0:5]
-```
+3.  **Outer Join**: Also known as a full join. Keeps any row found at least one in the two data sets and fills in whatever columns of data are available.
 
---
+    ```{python}
+    df_1.merge(df_2, how = "outer")
+    ```
 
-```{python ref.label = "slice1", echo = FALSE}
-```
+<img src="figs/join-outer.png" width="400"/>
 
---
+#### Question 4
 
-... get out a slice data frame. Sound familiar?
-
---
+Bring in 2015 county-level demographic data from the `choroplethr` package.
 
 ```{r}
-slice(uselections, 1:2)
+# install.packages("choroplethr")
+library(choroplethr)
+data(df_county_demographics)
 ```
 
-
----
-
-# Selecting and slicing
---
-
-**Method 1:** (preferred) access labels with `.loc`.
-
-```{python colandrow, eval = FALSE}
-uselections.loc[0:5, ["county"]]
-```
-
---
-
-```{python ref.label = "colandrow", echo = FALSE}
-```
-
-
----
-
-# Selecting and slicing
---
-
-**Method 2:** access integer indices with `.iloc`.
-
-```{python checkcols, eval = FALSE}
-uselections.columns
-```
-
---
-
-```{python ref.label = "checkcols", echo = FALSE}
-```
-
---
-
-```{python colandrow2, eval = FALSE}
-uselections.iloc[0:5, 3]
-```
-
---
-
-```{python ref.label = "colandrow2", echo = FALSE}
-```
-
-
----
-
-# Filtering rows
---
-
-You can apply a Boolean series as a mask.
-
-```{python boolrows, eval = FALSE}
-mask = uselections["year"] == 2016
-uselections[mask]
-```
-
---
-
-```{python ref.label = "boolrows", echo = FALSE}
-```
-
-
----
-
-## Filtering rows and selecting columns
-
-Boolean mask plus a list of columns.
-
-```{python boolandcolsa, eval = FALSE}
-mask = uselections["year"].isin([2012, 2016])
-uselections[mask, ["county", "state"]]
-```
-
-Will this run?
-
---
-
-> Need to use `.loc`
-
-```{python boolandcolsb, eval = FALSE}
-mask = uselections["year"].isin([2012, 2016])
-uselections.loc[mask, ["county", "state"]] #<<
-```
-
---
-
-```{python ref.label = "boolandcolsb", echo = FALSE}
-```
-
-
----
-
-### Let's shine that up.
-
-1.  Form data frame.
-2.  Apply `.agg()` method.
-3.  Pass as the aggregation function the string method to `.join`.
-
---
-
-```{python shincol, eval = TRUE}
-
-```
-
----
-
-# Pandas Inventory
-
-Now we know how to:
-
-1. Select columns
---
-
-2. Slice rows
---
-
-3. Do both simultaneously
---
-
-4. Filter rows using boolean masks
---
-
-5. Add columns
-
-
----
-
-# Practice: Question 1
-
----
-
-# Practice: Question 1
-
-Extract the first three rows where the candidate got more than 90% of the vote.
-
-```{python q1}
-uselections["prop"] = uselections["candidatevotes"]/uselections["totalvotes"]
-```
-
----
-
-# Handy utility functions
-
-**`sort_values()`**
-
-```{python eval = FALSE}
-uselections.sort_values("state")
-```
-
-**`value_counts()`**
-
-```{python, eval = FALSE}
-uselections["year"].value_counts()
-```
-
-**`unique()`**
-
-```{python}
-
-```
-
-**`sample()`**
-
-```{python}
-
-```
-
-
----
-
-# Practice: Question 2
-
-
----
-
-# Practice: Question 2
-
-Which candidates were on the ballot in California in 2016?
-
-```{python q2}
-uselections["candidate"].unique()
-mask = (uselections["year"] == 2016) & (uselections["state_po"] == "CA")
-uselections[mask]["candidate"].unique()
-```
-
-
----
-
-# Practice: Question 3
-
-Which were the top 5 counties in California in 2016 in the proportion of the vote won by Hillary Clinton?
-
-```{python}
-mask = (uselections["year"] == 2016) & (uselections["state_po"] == "CA") & (uselections["candidate"] == "Hillary Clinton")
-df = uselections[mask]
-df.sort_values("prop", ascending = False)["county"].head(5)
-```
-
-
----
-
-# Groupby
---
-
-For separate operations on subsets of the data frame, use *grouped* operations.
-
-```{python gb, eval = FALSE}
-uselections.groupby("year")
-```
-
---
-
-```{python ref.label = "gb", echo = FALSE}
-```
-
---
-
-```{python gbtot, eval = FALSE}
-uselections.groupby("year").agg(sum)
-```
-
---
-
-```{python ref.label = "gbtot", echo = FALSE}
-```
-
-
----
-
-# Practice: Question 4
-
-For each county in California in 2016, calculate the proportion of votes for each major party candidate.
-
-```{python}
-
-```
-
-
-
-
+Using this data, create a scatterplot of each counties percent vote in favor of Hillary Clinton as a function of their per capita income. Construct the scatterplot with ggplot2 but do the data wrangling in Python.
