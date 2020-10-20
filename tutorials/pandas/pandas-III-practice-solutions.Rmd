@@ -1,0 +1,76 @@
+---
+title: "Practice"
+output: html_document
+---
+
+```{python py-setup}
+import pandas as pd
+url = "https://raw.githubusercontent.com/andrewpbray/python-for-r-users/master/data/uselections.csv"
+uselections = pd.read_csv(url)
+```
+
+### Question 1
+
+How many counties are called "District"?
+
+```{python}
+sum(uselections["county"].str.contains("District"))
+```
+
+
+### Question 2
+
+Return a new data frame that removes all rows containing data from a "District".
+
+```{python}
+uselections[uselections["county"].str.contains("District") == False]
+uselections[~uselections["county"].str.contains("District")]
+```
+
+
+### Question 3
+
+Which counties have the greatest number of words in them? (recall that you can apply a normal function over an iterable using `.apply`)
+
+```{python}
+split_counties = uselections["county"].str.split()
+n_words = split_counties.str.len()
+n_words = split_counties.apply(len)
+new_df = pd.DataFrame({"county": uselections["county"], "n_words": n_words})
+new_df.sort_values("n_words", ascending = False).head(25)
+```
+
+
+### Question 4
+
+Bring in 2015 county-level demographic data from the `choroplethr` package.
+
+```{r}
+# install.packages("choroplethr")
+library(choroplethr)
+data(df_county_demographics)
+```
+
+Using this data, create a scatterplot of each counties percent vote in favor of Hillary Clinton as a function of their per capita income. Construct the scatterplot with ggplot2 but do the data wrangling in Python.
+
+```{python}
+county_demo = r.df_county_demographics
+is_2016 = (uselections["year"] == 2016)
+is_hil = (uselections["candidate"] == "Hillary Clinton")
+election_2016 = uselections[is_2016 & is_hil]
+prop_hillary = election_2016["candidatevotes"]/election_2016["totalvotes"]
+election_2016["prop_hillary"] = prop_hillary
+election_full = election_2016.merge(county_demo, left_on = "FIPS", right_on = "region")
+```
+
+```{r}
+library(tidyverse)
+library(reticulate)
+py$election_full %>%
+  ggplot(aes(x = per_capita_income, y = prop_hillary)) +
+  geom_point(alpha = .3) +
+  theme_bw()
+```
+
+
+
