@@ -1,0 +1,40 @@
+---
+title: "Practice"
+output: html_document
+---
+
+```{python py-setup}
+import pandas as pd
+url = "https://raw.githubusercontent.com/andrewpbray/python-for-r-users/master/data/uselections.csv"
+uselections = pd.read_csv(url)
+```
+
+### Question 1
+
+How many counties are called "Districts"?
+
+
+### Question 2
+
+Return a new data frame that removes all rows containing data from a "District".
+
+
+### Question 3
+
+Which counties have the greatest number of words in them? (recall that you can apply a normal function over an interable using `.apply`)
+
+
+### Question 4
+
+Bring in 2015 county-level demographic data from the `choroplethr` package.
+
+```{r}
+# install.packages("choroplethr")
+library(choroplethr)
+data(df_county_demographics)
+```
+
+Using this data, create a scatterplot of each counties percent vote in favor of Hillary Clinton as a function of their per capita income. Construct the scatterplot with ggplot2 but do the data wrangling in Python.
+
+
+
