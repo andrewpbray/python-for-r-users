@@ -3,8 +3,6 @@ title: "Pandas III"
 subtitle: ""
 author: "Andrew Bray"
 output: html_document
-editor_options: 
-  chunk_output_type: console
 ---
 
 # Agenda
@@ -75,13 +73,28 @@ When you append `.str` to a Series, the methods available will operate element-w
 
 How many counties are called "Districts"?
 
+```{python}
+sum(uselections["county"].str.contains("District"))
+```
+
 #### Question 2
 
 Return a new data frame that removes all rows containing data from a "District".
 
+```{python}
+uselections[uselections["county"].str.contains("District")]
+```
+
 #### Question 3
 
 Which counties have the greatest number of words in them? (recall that you can apply a normal function over an interable using `.apply`)
+
+```{python}
+split_counties = uselections["county"].str.split()
+n_words = split_counties.apply(len)
+new_df = pd.DataFrame({"county": uselections["county"], "n_words": n_words})
+new_df.sort_values("n_words", ascending = False).head(25)
+```
 
 ## Joins
 
@@ -89,7 +102,7 @@ Joins come into play when we want to utilize variables that are stored across mu
 
 ```{python}
 df_1 = pd.DataFrame({"id": [1, 2, 3], "x":["x1", "x2", "x3"]})
-df_2 = pd.DataFrame({"id": [1, 2, 4], "y":["y1", "y2", "y3"]})
+df_2 = pd.DataFrame({"unique_id": [1, 2, 4], "y":["y1", "y2", "y4"]})
 df_1
 df_2
 ```

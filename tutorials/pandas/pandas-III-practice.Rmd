@@ -11,7 +11,7 @@ uselections = pd.read_csv(url)
 
 ### Question 1
 
-How many counties are called "Districts"?
+How many counties are called "District"?
 
 
 ### Question 2
@@ -21,7 +21,7 @@ Return a new data frame that removes all rows containing data from a "District".
 
 ### Question 3
 
-Which counties have the greatest number of words in them? (recall that you can apply a normal function over an interable using `.apply`)
+Which counties have the greatest number of words in them? (recall that you can apply a normal function over an iterable using `.apply`)
 
 
 ### Question 4
