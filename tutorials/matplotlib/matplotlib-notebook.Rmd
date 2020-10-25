@@ -1,0 +1,160 @@
+---
+title: "matplotlib"
+subtitle: ""
+author: "Andrew Bray"
+output: html_document
+---
+
+# Agenda
+
+1.  Comments on Assignments
+2.  Reading in Data
+3.  String methods
+4.  Joins
+
+------------------------------------------------------------------------
+
+## Comments on Assignments
+
+<img src="figs/flight-delay-evidence.png" width="400"/>
+
+1.  Be sure your code is visible in your pdf (no overflowing lines).
+2.  If you get at least 2/3 of the points, you get credit on the assignment.
+3.  Please tag the pages to the questions, including multiple pages for a single question.
+4.  Don't forget to read thoroughly to find the question.
+
+Example of a question requiring code and a written answer:
+
+> 5.  Repeat the exercise but print out the first four values of both `dest` and `origin` but pass them as a list into the square brackets. Try also passing only `dest` as a list. In general, what happens when you subset the columns with a string versus with a list?
+
+```{python}
+flights[["dest", "origin"]].head(4)
+flights[["dest"]].head(4)
+# subsetting with a string with yield a series; with a list yields a data frame
+```
+
+------------------------------------------------------------------------
+
+## Reading / Writing Data
+
+Let's return to the example of county level data from presidential elections between 2000 and 2016.
+
+```{python}
+import pandas as pd
+url = "https://raw.githubusercontent.com/andrewpbray/python-for-r-users/master/data/uselections.csv"
+uselections = pd.read_csv(url)
+View(uselections)
+?uselections
+```
+
+Useful arguments to keep an eye out for:
+
+1.  `sep`: what is each data field separated by (can also use `delimiter`)
+2.  `header`: which row number has the columns names (or `none`)
+3.  `names`: list of columns names to use
+4.  `dtype`: dictionary of colname: type pairs for each column.
+5.  `index_col`: column to use as row labels when indexing.
+
+To *write* a data frame to a .csv file, use `df.to_csv()` .
+
+## String Methods
+
+Whenever you find yourself wanting to do operations on columns that contains strings, consider the methods available to you.
+
+```{python}
+uselections["county"].str
+dir(uselections["county"].str)
+uselections["county"].str.swapcase()
+```
+
+When you append `.str` to a Series, the methods available will operate element-wise down the columns.
+
+#### Question 1
+
+How many counties are called "Districts"?
+
+```{python}
+sum(uselections["county"].str.contains("District"))
+```
+
+#### Question 2
+
+Return a new data frame that removes all rows containing data from a "District".
+
+```{python}
+uselections[uselections["county"].str.contains("District")]
+```
+
+#### Question 3
+
+Which counties have the greatest number of words in them? (recall that you can apply a normal function over an interable using `.apply`)
+
+```{python}
+split_counties = uselections["county"].str.split()
+n_words = split_counties.apply(len)
+new_df = pd.DataFrame({"county": uselections["county"], "n_words": n_words})
+new_df.sort_values("n_words", ascending = False).head(25)
+```
+
+## Joins
+
+Joins come into play when we want to utilize variables that are stored across multiple rectangular data files. Consider the following two mock data frames that each contain a different variable, `x` or `y`.
+
+```{python}
+df_1 = pd.DataFrame({"id": [1, 2, 3], "x":["x1", "x2", "x3"]})
+df_2 = pd.DataFrame({"unique_id": [1, 2, 4], "y":["y1", "y2", "y4"]})
+df_1
+df_2
+```
+
+We can collect the observations that have been made on both the `x` and `y` variable using `.merge()`.
+
+```{python}
+df_1.merge(df_2)
+```
+
+<img src="figs/join-inner.png" width="400"/>
+
+```{python}
+?pandas.DataFrame.merge
+```
+
+This is an example of an **inner join**. It's one of the four most common database-style data joins. The remaining three are examples of *outer joins*, and they generally result in more rows in the resulting data frame, but often induce missing values.
+
+1.  **Left Join**: Keeps everything in the "left" data frame and add on columns containing any additional data in the "right" data frame.
+
+    ```{python}
+    df_1.merge(df_2, how = "left")
+    ```
+
+2.  **Right Join**: Keeps everything in the "right" data frame and add on columns containing any additional data in the "left" data frame.
+
+    ```{python}
+    df_1.merge(df_2, how = "right")
+    ```
+
+    Note that this is pretty much the same result as a left join with "left" and "right" swapped.
+
+    ```{python}
+    df_2.merge(df_1, how = "left")
+    ```
+
+3.  **Outer Join**: Also known as a full join. Keeps any row found at least one in the two data sets and fills in whatever columns of data are available.
+
+    ```{python}
+    df_1.merge(df_2, how = "outer")
+    ```
+
+<img src="figs/join-outer.png" width="400"/>
+
+#### Question 4
+
+Bring in 2015 county-level demographic data from the `choroplethr` package.
+
+```{r}
+# install.packages("choroplethr")
+library(choroplethr)
+data(df_county_demographics)
+```
+
+Using this data, create a scatterplot of each counties percent vote in favor of Hillary Clinton as a function of their per capita income. Construct the scatterplot with ggplot2 but do the data wrangling in Python.
