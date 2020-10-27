@@ -29,24 +29,11 @@ For each of the representations, what are the *observations* or *cases*? These r
 Extend the approach to tidying `D1` that we demonstrated to form `C` from `D1` and `D2`.
 
 ```{python}
-D1_tidy = D1.melt(id_vars = "country",
-                  value_vars = ["1999", "2000"], 
-                  var_name = "year", 
-                  value_name = "cases")
-D2_tidy = D2.melt(id_vars = "country",
-                  value_vars = ["1999", "2000"], 
-                  var_name = "year", 
-                  value_name = "population")
-D1_tidy.merge(D2_tidy)
 ```
 
 #### Question 3
 
 ```{python}
-fig = plt.figure()
-ax = plt.axes()
-x = np.linspace(0, 10, 1000)
-ax.plot(x, np.cos(x), color = "g", linestyle = "dashed")
 ```
 
 
