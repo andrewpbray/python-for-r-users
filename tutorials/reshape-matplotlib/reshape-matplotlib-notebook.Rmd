@@ -1,0 +1,275 @@
+---
+title: "Reshaping & Matplotlib"
+subtitle: ""
+author: "Andrew Bray"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse)
+library(boxofdata)
+library(palmerpenguins)
+data(penguins)
+data(flights)
+```
+
+# Agenda
+
+1.  Note on data wrangling
+
+2.  Note on groupby
+
+3.  Reshaping Data
+
+    i.  Tidy Data
+    ii. Pivoting
+    iii. Stacking
+
+4.  Plotting
+
+    i.  Pandas
+    ii. Matplotlib
+
+------------------------------------------------------------------------
+
+## Note on Data Wrangling
+
+Data wrangling is a very rich area of computing with data and we've just skimmed the surface. As you encounter a new data wrangling task in Python, I recommend you take a moment to think about the data type you'll be manipulating, the general operation that you'll be using, then read up on a tutorial in that area. The recommended books for this class are good places to start. For example:
+
+Python Data Science Handbook (Jake VanderPlas):
+
+-   [Working with Time Series](https://jakevdp.github.io/PythonDataScienceHandbook/03.11-working-with-time-series.html)
+-   [Visualization with Matplotlib](https://jakevdp.github.io/PythonDataScienceHandbook/04.00-introduction-to-matplotlib.html)
+
+Python for Data Analysis (Wes McKinney):
+
+-   [Time Series](https://nbviewer.jupyter.org/github/pydata/pydata-book/blob/2nd-edition/ch11.ipynb)
+-   [Plotting and Visualization](https://nbviewer.jupyter.org/github/pydata/pydata-book/blob/2nd-edition/ch09.ipynb)
+
+------------------------------------------------------------------------
+
+## Note on `groupby`
+
+For Lab 8, question 1:
+
+> Use date-time methods to determine which day of the week is best to fly from the Bay Area to Seattle if you want to minimize delays. Does the answer differ between Oakland and San Francisco Airports?
+
+```{python}
+flights = r.flights
+sea_flights = flights[flights["dest"] == "SEA"]
+dow = sea_flights["time_hour"].dt.day_name()
+sea_flights["day_of_week"] = dow
+sea_flights[["day_of_week","dep_delay"]].groupby("day_of_week").agg("mean").sort_values("dep_delay")
+
+```
+
+In Pandas, after a grouped-by aggregation the result is a data frame, where each row corresponds to a value of the Cartesian product of the grouping variables.
+
+```{python}
+sea2["origin"]
+sea2["day_of_week"]
+sea2["dep_delay"]
+sea2.index
+sea2.index[0]
+
+```
+
+Those grouping variable values are stores as indices (row names), where as in R, they're stored as ordinary variables.
+
+```{r}
+library(lubridate)
+flights %>%
+  filter(dest == "SEA") %>%
+  mutate(day_of_week = wday(time_hour, label = TRUE)) %>%
+  group_by(day_of_week) %>%
+  summarize(mean_dep_delay = mean(dep_delay, na.rm = TRUE)) %>%
+  arrange(mean_dep_delay)
+```
+
+------------------------------------------------------------------------
+
+## Reshaping Data
+
+### Tidy Data (Wickham 2014)
+
+There are three interrelated rules which make a dataset tidy:
+
+1.  Each variable must have its own column.
+
+2.  Each observation must have its own row.
+
+3.  Each value must have its own cell.
+
+<img src="figs/tidy-1.png" width="600"/>
+
+#### Question 1
+
+```{python}
+A = r.table3
+B = r.table2
+C = r.table1
+D1 = r.table4a
+D2 = r.table4b
+```
+
+### Reshaping Data
+
+**Example**: Consider `D1`. How can this be tidied?
+
+```{python}
+D1
+```
+
+-   Column names are *values* not *variables*.
+-   We need to gather the columns into a new pair of variables.
+-   We want to pivot "wide" to "long" with `.melt()`
+
+```{python}
+?D1.melt
+D1.melt(id_vars = "country",
+        value_vars = ["1999", "2000"], 
+        var_name = "year", 
+        value_name = "cases")
+```
+
+#### Question 2
+
+**Example**: Consider `B`. How can this be tidied?
+
+```{python}
+B
+```
+
+-   Each *observation* is spread across multiple rows.
+-   We need to spread the values of a variable across multiple columns.
+-   We want to pivot "long" to "wide" with `.pivot()`.
+
+```{python}
+?B.pivot
+B.pivot(index = ["country", "year"],
+        columns = "type",
+        values = "count")
+```
+
+------------------------------------------------------------------------
+
+## Plotting
+
+### `Pandas`
+
+Pandas has some bare bones plotting functionality if you want to go straight from your data frame to a quick plot. It actually calls up `matplotlib`, so lets install and load that.
+
+```{r}
+#reticulate::py_install("matplotlib")
+```
+
+```{python}
+import matplotlib.pyplot as plt
+sea_by_day = sea_flights[["day_of_week","dep_delay"]].groupby("day_of_week").agg("mean").sort_values("dep_delay")
+sea_by_day.plot.bar()
+```
+
+These are generally just wrappers for functions within `matplotlib`, so probably better to call those directly.
+
+### `matplotlib`
+
+```{python}
+plt.bar(sea_by_day.index, sea_by_day["dep_delay"])
+plt.barh(sea_by_day.index, sea_by_day["dep_delay"])
+```
+
+In your Rmd, you will need to run `plt.show()` whenever you want to see your plot, but in a Jupyter notebook, you can get them to render automatically.
+
+### An "Active" Interface
+
+Consider the following code.
+
+```{python}
+import numpy as np
+plt.figure()  # create a plot figure
+
+# create the first of two panels
+plt.subplot(2, 1, 1) # (rows, columns, panel number)
+plt.plot(np.random.normal(scale = 1, size = 100))
+
+# create the second panel
+plt.subplot(2, 1, 2)
+plt.plot(np.random.normal(scale = 2, size = 100))
+```
+
+In this interface, `matplotlib` is keeping track of which plot (or subplot) is the active one. Any plotting commands called will update that plot. This is similar to base R.
+
+```{r}
+par(mfrow = c(2, 1))
+plot(rnorm(100, sd = 1))
+plot(rnorm(100, sd = 2))
+```
+
+This interface is brittle and error-prone. Better to use...
+
+### An Object-oriented Interface
+
+```{python}
+# First create a grid of plots
+# ax will be an array of two Axes objects
+fig, ax = plt.subplots(2)
+
+# Call plot() method on the appropriate object
+ax[0].plot(np.random.normal(scale = 1, size = 100))
+ax[1].plot(np.random.normal(scale = 2, size = 100))
+```
+
+Here, we're calling the `.plot()` method on a particulate `ax` object (a subplot), so we can be explicit in what we're modifying. `plt.plot()` , by contrast, will modify whatever the active plot is.
+
+### Simple line plot
+
+Let's build up a plot from scratch. Start by creating the figure as well as defining the axis.
+
+```{python}
+fig = plt.figure()
+ax = plt.axes()
+?plt.figure
+?plt.axes
+```
+
+To plot a function along the axis, we call the `.plot()` method on that ax.
+
+```{python}
+x = np.linspace(0, 10, 1000)
+ax.plot(x, np.sin(x))
+# plt.plot(x, np.sin(x)) # "active" interface approach
+```
+
+Let's add another line.
+
+```{python}
+ax.plot(x, np.cos(x))
+```
+
+#### Colors and Line Styles
+
+Aesthetic preferences can be passed as arguments to `.plot()`.
+
+```{python}
+ax.plot(x, np.cos(x), color = "g")
+```
+
+Can also use `color = "green"`, as well as hex codes like `color = "#FFDD44"`. To adjust the line style, specify the `linestyle` with a string.
+
+```{python}
+ax.plot(x, np.cos(x), color = "g", linestyle = "dashed")
+```
+
+You'll also sometimes see a very tense (and not recommended) combination:
+
+```{python}
+ax.plot(x, np.cos(x), '-.g')
+```
+
+#### Other settings
+
+#### Question 4
+
+#### Question 5

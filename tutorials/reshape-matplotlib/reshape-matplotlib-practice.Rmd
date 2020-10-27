@@ -1,0 +1,74 @@
+---
+title: "Reshaping & Matplotlib"
+subtitle: ""
+author: "Andrew Bray"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+#### Question 1
+
+Take a look at the following 4 representations of the same data set concerning occurrences of Tuberculosis in various countries.
+
+```{python}
+A = r.table3
+B = r.table2
+C = r.table1
+D1 = r.table4a
+D2 = r.table4b
+```
+
+For each of the representations, what are the *observations* or *cases*? These refer to specific, unique, and similar sorts of things.  What are the *variables*? These should take the same sort of *value* for each case.
+
+
+#### Question 2
+
+Extend the approach to tidying `D1` that we demonstrated to form `C` from `D1` and `D2`.
+
+```{python}
+D1_tidy = D1.melt(id_vars = "country",
+                  value_vars = ["1999", "2000"], 
+                  var_name = "year", 
+                  value_name = "cases")
+D2_tidy = D2.melt(id_vars = "country",
+                  value_vars = ["1999", "2000"], 
+                  var_name = "year", 
+                  value_name = "population")
+D1_tidy.merge(D2_tidy)
+```
+
+#### Question 3
+
+```{python}
+fig = plt.figure()
+ax = plt.axes()
+x = np.linspace(0, 10, 1000)
+ax.plot(x, np.cos(x), color = "g", linestyle = "dashed")
+```
+
+
+Modify the title, labels, and axis limits with
+
+- `ax.set_xlabel()`
+- `ax.set_ylabel()`
+- `ax.set_xlim()`
+- `ax.set_ylim()`
+- `ax.set_title()`
+
+#### Question 4
+
+```{r}
+library(palmerpenguins)
+data(penguins)
+```
+
+```{python}
+penguins = r.penguins
+```
+
+Create a scatter plot of bill length on bill depth by passing each as a series argument to `.plot()`.
+
+
