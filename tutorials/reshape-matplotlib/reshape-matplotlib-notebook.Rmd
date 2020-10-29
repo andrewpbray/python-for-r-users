@@ -62,6 +62,10 @@ sea_flights = flights[flights["dest"] == "SEA"]
 dow = sea_flights["time_hour"].dt.day_name()
 sea_flights["day_of_week"] = dow
 sea_flights[["day_of_week","dep_delay"]].groupby("day_of_week").agg("mean").sort_values("dep_delay")
+sea2 = (sea_flights[["day_of_week","dep_delay", "origin"]]
+        .groupby(["origin", "day_of_week"])
+        .agg("mean")
+        .sort_values(["origin", "dep_delay"]))
 
 ```
 
@@ -83,7 +87,7 @@ library(lubridate)
 flights %>%
   filter(dest == "SEA") %>%
   mutate(day_of_week = wday(time_hour, label = TRUE)) %>%
-  group_by(day_of_week) %>%
+  group_by(origin, day_of_week) %>%
   summarize(mean_dep_delay = mean(dep_delay, na.rm = TRUE)) %>%
   arrange(mean_dep_delay)
 ```
@@ -168,7 +172,7 @@ Pandas has some bare bones plotting functionality if you want to go straight fro
 ```{python}
 import matplotlib.pyplot as plt
 sea_by_day = sea_flights[["day_of_week","dep_delay"]].groupby("day_of_week").agg("mean").sort_values("dep_delay")
-sea_by_day.plot.bar()
+sea_by_day.plot.barh()
 ```
 
 These are generally just wrappers for functions within `matplotlib`, so probably better to call those directly.
