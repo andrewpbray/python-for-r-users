@@ -1,0 +1,28 @@
+---
+title: "Reshaping & Matplotlib"
+subtitle: ""
+author: "Andrew Bray"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+data(penguins)
+```
+
+```{python}
+penguins = r.penguins
+```
+
+#### Question 1
+
+Use `seaborn` to create a scatter plot of bill length on bill depth with faceting based on species.
+
+#### Question 2
+
+Use `sns.relplot()` or `sns.lineplto()` to recreate plot 2 from lab 9.
+
+#### Question 3
+
+Use seaborn and the penguins data to create a new plot type.
