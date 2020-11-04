@@ -17,7 +17,7 @@ penguins = r.penguins
 
 #### Question 1
 
-Use `seaborn` to create a scatter plot of bill length on bill depth with faceting based on species.
+Use `sns.relplot()` to create a scatter plot of bill length on bill depth with faceting based on species.
 
 #### Question 2
 

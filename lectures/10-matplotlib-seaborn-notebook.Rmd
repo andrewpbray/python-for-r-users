@@ -27,40 +27,29 @@ import seaborn as sns
 
 1.  Plotting Ecosystem in Python
 
-2.  Line plots
+2.  Line plots in Matplotlib and Seaborn
 
-3.  Bar plots
-
-4.  Univariate Distributions
-
-    -   Histograms
-    -   Density curve
-    -   Violin plot
-    -   Box plot
-
-5.  Coloring, faceting
+3.  Seaborn Overview
 
 ------------------------------------------------------------------------
 
 ## Plotting Ecosystem in Python
 
-### `matplotlib`
+We'll be using the visualization functionality of three packages:
 
-The workhorse engine of static plots in Python, based on Matlab's approach to visualization.
+- `matplotlib`: The workhorse engine of static plots in Python, based on Matlab's approach to visualization.
 
-### `pandas`
+- `pandas`: Though not it's focus, the package includes wrappers for `matplotlib`: just call `.plot()` method on a data frame and ... see what you get. Good for quick and dirty visualization.
 
-Includes wrappers for `matplotlib`: just call `.plot()` method on a data frame and ... see what you get. Good for quick and dirty visualization.
+- `seaborn`: A higher-level wrapper for `matplotlib`.
 
-### `seaborn`
+    - More polished default aesthetics.
+    - Uses `ggplot2` style non-standard evaluation.
+    - Prefers tall tidy data frames (also like `ggplot2`)
 
-A higher-level wrapper for `matplotlib`.
+When working with these packages, it's good to keep in mind the two different interfaces that they provide.
 
--   More polished default aesthetics.
--   Uses `ggplot2` style non-standard evaluation.
--   Prefers tall tidy data frames (also like `ggplot2`)
-
-### An "Active" Interface
+### Active Interface
 
 Consider the following code.
 
@@ -86,7 +75,7 @@ plot(rnorm(100, sd = 2))
 
 This interface is brittle and error-prone. Better to use...
 
-### An Object-oriented Interface
+### Object-oriented Interface
 
 ```{python}
 # First create a grid of plots
@@ -100,9 +89,11 @@ ax[1].plot(np.random.normal(scale = 2, size = 100))
 
 Here, we're calling the `.plot()` method on a particulate `ax` object (a subplot), so we can be explicit in what we're modifying. `plt.plot()` , by contrast, will modify whatever the active plot is.
 
-### Simple line plot
+## Simple line plot
 
-When building a plot, functions work on the *figure* or the *axes*.
+### First, in `matplotlib`
+
+When building a plot, most functions will work either on the *figure* or the *axes*.
 
 ```{python}
 fig = plt.figure()
@@ -127,9 +118,9 @@ Let's add another line.
 ax.plot(x, np.cos(x))
 ```
 
-#### Colors and Line Styles
+#### Fine tuning the aesthetics
 
-Aesthetic preferences can be passed as arguments to `.plot()`.
+Several aesthetic preferences can be passed as arguments to `.plot()` including `color` and `linetype`.
 
 ```{python}
 ax.plot(x, np.cos(x), color = "g")
@@ -147,9 +138,7 @@ You'll also sometimes see a very terse (and not recommended) combination:
 ax.plot(x, np.cos(x), '-.g')
 ```
 
-#### Other settings
-
-In general, subsequent edits to the plot are made by additional function calls, one for each edit. This can be done either using the "active" plot or OOP approach.
+Other aesthetics are specified through additional method or function calls, one for each edit. This can be done either using the active plot or OOP approach. A few common functions are found below. The OOP approach often, but not always, prefaces the method with `set_`.
 
 **OOP**
 
@@ -171,7 +160,7 @@ In general, subsequent edits to the plot are made by additional function calls, 
 
 <img src="figs/or-plot-1.png" width="400"/>
 
-First we prepare the data,
+Let's recreate this plot from the Reshaping Votes lab. First we prepare the data,
 
 ```{python}
 #df = tabula.read_pdf("../data/Daily-Ballot-Returns.pdf", pages = 2)[0]
@@ -204,10 +193,14 @@ axes[1].plot(des["Date"], des["Cumulative count"])
 plt.show()
 ```
 
-Some ugliness:
+Note that the first plot was constructed by passing the strings of the variable names and then the data frame separately. This is called *non-standard evaluation* and is what is used extensively in the R tidyverse and in `seaborn`.
+
+We still have some ugliness there:
 
 -   Date are cut off at bottom
 -   No labels on axes or figure
+
+Let's see if we can fix it.
 
 ```{python}
 plt.subplots_adjust(bottom = .2, wspace = .3)
@@ -238,7 +231,7 @@ plt.subplots_adjust(bottom = .2, wspace = .3)
 fig.suptitle("Cumulative Ballot Returns")
 ```
 
-### Seaborn
+### Second, in `seaborn`
 
 Seaborn adds two useful things to the mix:
 
@@ -248,7 +241,7 @@ Seaborn adds two useful things to the mix:
 We can use `sns.lineplot()` to recreate the line plot for just Multnomah County (active figure interface),
 
 ```{python}
-sns.lineplot(data = mult, x = "Date", y = "Cumulative count", ci = None)
+sns.lineplot(data = mult, x = "Date", y = "Cumulative count")
 plt.tick_params("x", labelrotation = 90)
 plt.title("Multnomah County")
 plt.subplots_adjust(bottom = .3)
@@ -258,11 +251,13 @@ and we can also use the OOP interface:
 
 ```{python}
 fig = plt.figure()
-ax = sns.lineplot(data = mult, x = "Date", y = "Cumulative count", ci = None)
+ax = sns.lineplot(data = mult, x = "Date", y = "Cumulative count")
 ax.tick_params("x", labelrotation = 90)
 ax.set_title("Multnomah County")
 fig.subplots_adjust(bottom = .3)
 ```
+
+Note that both forms use non-standard evaluation, where you pass the name of the data frame, then refer to the variables simply as strings.
 
 We can plot both counties much more elegantly and efficiently using faceting.
 
@@ -272,7 +267,9 @@ g = sns.FacetGrid(data = mult_des, col = "County", margin_titles = True)
 g.map(sns.lineplot, "Date", "Cumulative count")
 ```
 
-Same thing in wrapper function `.relplot()`:
+This is a *big* improvement over the way that we made this plot in `matplotlib`. That code involved splitting out data set out into two separate data sets. This allows us to keep them well-organized in a single data set.
+
+We can get the same thing by using a higher-level wrapper function called `.relplot()` (relational plot). We'll also use functions very similar to the ones we used in `matplotlib` to fine tune the aesthetics (label rotation, spacing, and a title).
 
 ```{python}
 g = sns.relplot(data = mult_des, 
@@ -285,19 +282,34 @@ g.fig.subplots_adjust(bottom = .3)
 g.fig.suptitle("Cumulative Ballot Returns")
 ```
 
+`.relplot()` allows us to make `kind = "line"` and `kind = "scatter"` plots with more complex functionality (like faceting) in a single function call.
+
 #### Question 1
 
-Use `seaborn` to create a scatter plot of bill length on bill depth with faceting based on species.
+Use `sns.relplot()` to create a scatter plot of bill length on bill depth with faceting based on species.
+
+```{python}
+penguins = r.penguins
+g = sns.relplot(data = penguins, 
+              x = "bill_length_mm", 
+              y = "bill_depth_mm",
+              col = "species",
+              kind = "scatter")
+```
 
 ### Example 2: Cumulative Ballot Returns for all Counties
 
 <img src="figs/or-plot-2.png" width="400"/>
+
+This is a (very busy) way to communicate the ballot return data from all counties in a single plot. Let's first build it using `matbplotlib`. We start by getting each of the county cumulative counts along their own column.
 
 ```{python}
 df3 = df2.pivot(index = "Date",
                 columns = "County", 
                 values = "Cumulative count")
 ```
+
+To get all of those lines on to the same plot requires calling `.plot()` many times. This is best done in a for loop.
 
 ```{python}
 fig, axes = plt.subplots(1, 1, 1)
@@ -317,15 +329,18 @@ for column in df3:
 
 #### Question 2
 
-Use `sns.relplot()` or `sns.lineplto()` to recreate this plot.
+Use `sns.relplot()` or `sns.lineplot()` to recreate this plot.
 
 ```{python}
-
+g = sns.relplot(data = df2, 
+              x = "Date", 
+              y = "Cumulative count",
+              hue = "County",
+              kind = "line")
 ```
 
 ## Seaborn Overview
 
 <img src="figs/seaborn-overview.png" width="600"/>
 
-
-#### Question 3
+As we said at the outset, the main advantage you get with `seaborn` is access to several high-level functions that save you from having to build-up plots "by hand" in `matplotlib`. In fact, each of these powerful plotting functions can alternatively be called from their even higher-level wrapper: `relplot()`, `displot()`, and `catplot()`.
