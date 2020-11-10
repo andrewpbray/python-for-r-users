@@ -1,5 +1,5 @@
 ---
-title: "Matplotlib and Seaborn"
+title: "Linear Models"
 subtitle: ""
 author: "Andrew Bray"
 output: html_document
@@ -317,4 +317,3 @@ Note that the formula interface allows you to pass many tweaks to your model spe
     .fit()
     .summary())
 ```
-
