@@ -143,9 +143,10 @@ ggplotly(p)
 library(palmerpenguins)
 data(penguins)
 penguins <- drop_na(penguins)
-ggplot(penguins, aes(x = flipper_length_mm, 
+p <- ggplot(penguins, aes(x = flipper_length_mm, 
                      y = body_mass_g)) +
   geom_point()
+ggplotly(p)
 ```
 
 One of the simplest models of multivariate data is the linear model. The plot above makes it clear that the body mass of a penguin is well described by a linear function of its flipper length, plus of some random noise.
@@ -158,6 +159,7 @@ The workhorse function for this model in R is `lm()`. Let's fit the model and in
 
 ```{r}
 m1 <- lm(body_mass_g ~ flipper_length_mm, data = penguins)
+m2 <- lm(body_mass_g ~ poly(flipper_length_mm, 2), data = penguins)
 ```
 
 The `lm` object contains:
@@ -293,7 +295,7 @@ res.f_pvalue
 There are a wide variety of diagnostic plots available.
 
 ```{python}
-# Residuals vs fitted plot
+# Residuals plot
 fig = sm.graphics.plot_regress_exog(res, "flipper_length_mm")
 plt.show()
 
@@ -313,7 +315,7 @@ Note that the formula interface allows you to pass many tweaks to your model spe
 -   Interaction effects
 
 ```{python}
-(smf.ols("body_mass_g ~ flipper_length_mm", data = penguins)
+(smf.ols("body_mass_g ~ flipper_length_mm * species", data = penguins)
     .fit()
     .summary())
 ```
