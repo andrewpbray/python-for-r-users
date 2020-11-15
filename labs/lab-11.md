@@ -1,4 +1,4 @@
-Lab 11: LA Homes
+Lab 11: Model Homes
 ================
 
 <img src="figs/david-mansion-LA.jpg" width="66%" style="display: block; margin: auto;" />
