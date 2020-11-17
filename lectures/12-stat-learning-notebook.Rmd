@@ -1,0 +1,277 @@
+---
+title: "Statistical Learning"
+subtitle: ""
+author: "Andrew Bray"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{python}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+import plotly.express as px
+import plotly.graph_objs as go
+```
+
+# Agenda
+
+1.  Review linear models from Lab
+
+2.  Assessing predictive accuracy
+
+3.  Adding complexity
+
+4.  Out of sample prediction
+
+5.  A general predictive modeling framework: `scikit-learn`
+
+------------------------------------------------------------------------
+
+## Review linear models from lab
+
+<img src="../labs/figs/david-mansion-LA.jpg" width="600"/>
+
+#### Data cleaning
+
+```{python}
+# data import and initial cleaning
+la = pd.read_csv("https://raw.githubusercontent.com/andrewpbray/python-for-r-users/master/data/la-homes.csv")
+la = la.drop(columns = "spa")
+la = la.loc[la["type"] == "SFR"]
+
+# plot relationship
+p = px.scatter(la, x = "sqft", y = "price")
+p.show()
+
+# address outliers and transformations
+la = la.loc[la["sqft"] < 20000]
+la["log_sqft"] = np.log(la["sqft"])
+la["log_price"] = np.log(la["price"])
+```
+
+#### A model for price
+
+```{python}
+m1 = smf.ols("log_price ~ log_sqft + city + bed", data = la)
+res = m1.fit()
+pd.DataFrame({"coef": res.params,
+              "p-value": res.pvalues})
+```
+
+*Question*: How should we interpret the `city` coefficients?
+
+*Question*: How should we interpret the sign of the `bed` coefficient?
+
+## Assessing predictive accuracy
+
+We often use regression models for two distinct purposes:
+
+1.  Learn about the world by making inferences on parameters.
+2.  Use the regression machine to make predictions for new values of `x`.
+
+For the remainder of this course we'll focus on number 2 and start with the question: how can we measure the accuracy of our predictions?
+
+Let's think this through by starting from scratch with a simple linear model of the untransformed data. Let's also dramatically subset the observation so that we can more closely see what's going on.
+
+```{python}
+# Subsample data
+la_tiny = la.sample(n = 30, random_state = 341)
+
+# Fit the model
+slr1 = smf.ols("price ~ sqft", data = la_tiny).fit()
+pd.DataFrame({"coef": slr1.params,
+              "p-value": slr1.pvalues})
+
+# Plot the data
+fig = go.Figure()
+fig.add_trace(go.Scatter(x = la_tiny["sqft"], 
+                         y = la_tiny["price"],
+                         mode = "markers",
+                         name = "training data"))
+fig.show()
+
+# Add the model
+x_grid = np.linspace(800, 9500) 
+y_hat  = slr1.predict(pd.DataFrame({"sqft": x_grid}))
+fig.add_trace(go.Scatter(x = x_grid, 
+                         y = y_hat,
+                         mode = "lines",
+                         name = "linear model"))
+fig.show()
+```
+
+A natural way to measure the predictive accuracy of this model is to compute the mean of squared residuals (MSE).
+
+```{python}
+slr1.mse_resid
+sum(slr1.resid**2)/(len(slr1.resid) - 2)
+```
+
+## Adding complexity
+
+In the lab, you added covariates to build a better model. When working with just `sqft`, we can hope to build a better model just by adding polynomial terms.
+
+```{python}
+# Fit the model
+slr2 = smf.ols("price ~ sqft + np.power(sqft, 2)", data = la_tiny).fit()
+pd.DataFrame({"coef": slr2.params,
+              "p-value": slr2.pvalues})
+
+# Add the new model
+y_hat  = slr2.predict(pd.DataFrame({"sqft": x_grid,}))
+fig.add_trace(go.Scatter(x = x_grid, 
+                         y = y_hat,
+                         mode = "lines",
+                         name = "quadratic model"))
+fig.show()
+```
+
+It looks like predictions should be improving but we can check our metric for accuracy to be sure.
+
+```{python}
+slr1.mse_resid
+slr2.mse_resid
+```
+
+This is a tempting road to go down, but there is the sense that if the model is too complex / too flexible, it will be *overfitting* out data, and will suffer when it comes to making predictions on new observations.
+
+## Out of sample prediction
+
+To gauge the predictive ability of the model, it needs to be evaluated on data that was *not* used to fit the model. We can either wait for more data to come along, or we can divide up our existing data into testing and training.
+
+**Training Data**: Data used to fit the model **Testing Data**: Data not used in the fitting process that is used to assess model predictions
+
+```{python}
+la_train = la_tiny.iloc[0:15, :]
+la_test = la_tiny.iloc[15:30, :]
+```
+
+```{python}
+# Fit the model
+slr1 = smf.ols("price ~ sqft", data = la_train).fit()
+pd.DataFrame({"coef": slr1.params,
+              "p-value": slr1.pvalues})
+
+# Plot the training data
+fig = go.Figure()
+fig.add_trace(go.Scatter(x = la_train["sqft"], 
+                         y = la_train["price"],
+                         mode = "markers",
+                         name = "training data"))
+
+# Add the fitted model
+x_grid = np.linspace(800, 9500) 
+y_hat  = slr1.predict(pd.DataFrame({"sqft": x_grid}))
+fig.add_trace(go.Scatter(x = x_grid, 
+                         y = y_hat,
+                         mode = "lines",
+                         name = "linear model"))
+                         
+# Add the test data
+fig.add_trace(go.Scatter(x = la_test["sqft"], 
+                         y = la_test["price"],
+                         mode = "markers",
+                         name = "test data"))
+fig.show()
+```
+
+```{python}
+y_hat_test = slr1.predict(la_test)
+sum((y_hat_test - la_test["sqft"])**2)/(len(la_test["sqft"]) - 2)
+```
+
+If we want a model with the best predictive performance, though, this feels like a prodigious waste of data. We could get a better sense of its performance by reversing the process, then averaging the two resulting MSEs.
+
+<img src="figs/2-fold-CV.png" width="400"/>
+
+We can do better, though, by separating the data into $k$ *folds*, then iterating through each of them in turn. Instead of 2-fold, we could do 5-fold.
+
+<img src="figs/5-fold-CV.png" width="400"/>
+
+This process is called *cross-validation* and it's goal is to help select the final model that we'll use. While it's certainly possible to do this with `statsmodels`, it is a much more general approach to predictive model fitting that is implemented very directly in `scikit-learn`.
+
+## A general predictive modeling framework: `scikit-learn`
+
+```{r}
+# reticulate::py_install("scikit-learn")
+```
+
+`scikit-learn` is a very powerful and general package for predictive modeling / machine learning. It separates out the modeling into several distinct steps that will be unfamiliar if you're used to just calling `lm()`.
+
+1.  Choose a class of model
+
+```{python}
+from sklearn.linear_model import LinearRegression
+```
+
+2.  Choose model hyperparameters
+
+```{python}
+model = LinearRegression(fit_intercept = True)
+model
+dir(model)
+```
+
+3.  Arrange data into a *features* matrix (`X`) and a *target vector* (`y`)
+
+-   `y` must be one dimensional, `X` must be two dimensional
+
+```{python}
+y = la_tiny["price"].to_numpy()
+X = la_tiny["sqft"].to_numpy()
+
+# check dimension
+y.shape
+X.shape
+
+# change X into a two-dim object
+X = X[:, np.newaxis]
+X.shape
+```
+
+4.  Fit the model to your data
+
+```{python}
+model.fit(X, y)
+dir(model)
+```
+
+The result of the new computations done when fitting are all named with a trailing underscore.
+
+```{python}
+model.coef_
+model.intercept_
+```
+
+To compare to the output from `statsmodels`.
+
+```{python}
+pd.DataFrame({"coef": slr1.params,
+              "p-value": slr1.pvalues})
+```
+
+5.  Predict onto new data and access accuracy
+
+We first assess accuracy naively through training MSE.
+
+```{python}
+# predict back onto training data
+y_hat = model.predict(X)
+
+# assess accuracy
+import sklearn.metrics as metrics
+metrics.mean_squared_error(y, y_hat)
+```
+
+Note that there are a [wide range](https://scikit-learn.org/stable/modules/classes.html#module-sklearn.metrics) of possible metrics available. Moving to the much more useful cross-validated MSE is very simple.
+
+```{python}
+from sklearn.model_selection import cross_validate
+cv_results = cross_validate(model, X, y, cv = 5, scoring = "neg_mean_squared_error")
+```
+
