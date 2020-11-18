@@ -114,16 +114,50 @@ sum(slr1.resid**2)/(len(slr1.resid) - 2)
 
 ## Adding complexity
 
-In the lab, you added covariates to build a better model. When working with just `sqft`, we can hope to build a better model just by adding polynomial terms.
+In the lab, you added covariates to build a better model. When working with just `sqft`, we can hope to build a better model by adding polynomial terms. In R, we'd use the built-in `poly()` function to create orthonormal polynomials (the idea is to avoid the fact hat if we just used the raw polynomial terms, `x` and `x^2`, they'd be highly correlated).
+
+There is no built-in method to do this in `python` or `statsmodels`, so we'll look ahead and borrow it from `scikit-learn` .
+
+```{python}
+from sklearn.preprocessing import PolynomialFeatures
+```
+
+### Formula interface vs data interface
+
+Adding polynomial terms requires that we dodge the formula interface to `statsmodels` that we get with `smf.ols()` and instead use a different function, `sm.OLS()`, that takes a separate predictor array `X` (also called the *features*) and the response vector `y` (also called the *target vector*). Just for comparison's sake, this is how the SLR model looks both ways.
+
+```{python}
+# formula interface
+slr1 = smf.ols("price ~ sqft", data = la_tiny).fit()
+
+# data interface
+y = la_tiny["price"]
+X = la_tiny["sqft"]
+X = sm.add_constant(X)
+y
+X
+slr_alt = sm.OLS(y, X).fit()
+```
+
+The results are the exact same - phew. Now you can augment the predictor matrix `X` by adding polynomial features.
+
+```{python}
+polynomial_features = PolynomialFeatures(degree = 2)
+Xp = polynomial_features.fit_transform(X)
+Xp
+```
+
+Then continue to fitting the model.
 
 ```{python}
 # Fit the model
-slr2 = smf.ols("price ~ sqft + np.power(sqft, 2)", data = la_tiny).fit()
+slr2 = sm.OLS(y, Xp).fit()
 pd.DataFrame({"coef": slr2.params,
               "p-value": slr2.pvalues})
 
 # Add the new model
-y_hat  = slr2.predict(pd.DataFrame({"sqft": x_grid,}))
+Xp_grid = polynomial_features.fit_transform(sm.add_constant(x_grid))
+y_hat  = slr2.predict(Xp_grid)
 fig.add_trace(go.Scatter(x = x_grid, 
                          y = y_hat,
                          mode = "lines",
@@ -131,11 +165,30 @@ fig.add_trace(go.Scatter(x = x_grid,
 fig.show()
 ```
 
-It looks like predictions should be improving but we can check our metric for accuracy to be sure.
+It looks like predictions should improve but we can check our metric for accuracy to be sure.
 
 ```{python}
 slr1.mse_resid
 slr2.mse_resid
+```
+
+Let's follow the line of thinking and see if we can improve things more with a cubic model.
+
+```{python}
+polynomial_features = PolynomialFeatures(degree = 3)
+Xp = polynomial_features.fit_transform(X)
+slr3 = sm.OLS(y, Xp).fit()
+Xp_grid = polynomial_features.fit_transform(sm.add_constant(x_grid))
+y_hat  = slr3.predict(Xp_grid)
+fig.add_trace(go.Scatter(x = x_grid, 
+                         y = y_hat,
+                         mode = "lines",
+                         name = "cubic model"))
+fig.show()
+
+slr1.mse_resid
+slr2.mse_resid
+slr3.mse_resid
 ```
 
 This is a tempting road to go down, but there is the sense that if the model is too complex / too flexible, it will be *overfitting* out data, and will suffer when it comes to making predictions on new observations.
@@ -144,16 +197,26 @@ This is a tempting road to go down, but there is the sense that if the model is 
 
 To gauge the predictive ability of the model, it needs to be evaluated on data that was *not* used to fit the model. We can either wait for more data to come along, or we can divide up our existing data into testing and training.
 
-**Training Data**: Data used to fit the model **Testing Data**: Data not used in the fitting process that is used to assess model predictions
+**Training Data**: Data used to fit the model
+
+**Testing Data**: Data not used in the fitting process that is used to assess model predictions
+
+Make this division in `la_tiny` by putting the first 15 observations into a training set and the latter 15 in a test set.
 
 ```{python}
 la_train = la_tiny.iloc[0:15, :]
 la_test = la_tiny.iloc[15:30, :]
 ```
 
+Then, working only with `la_train`.
+
 ```{python}
+y = la_train["price"]
+X = la_train["sqft"]
+X = sm.add_constant(X)
+
 # Fit the model
-slr1 = smf.ols("price ~ sqft", data = la_train).fit()
+slr1 = sm.OLS(y, X).fit()
 pd.DataFrame({"coef": slr1.params,
               "p-value": slr1.pvalues})
 
@@ -165,22 +228,27 @@ fig.add_trace(go.Scatter(x = la_train["sqft"],
                          name = "training data"))
 
 # Add the fitted model
-x_grid = np.linspace(800, 9500) 
-y_hat  = slr1.predict(pd.DataFrame({"sqft": x_grid}))
+x_grid = np.linspace(800, 9500)
+X_grid = sm.add_constant(x_grid)
+y_hat  = slr1.predict(y, X_grid)
 fig.add_trace(go.Scatter(x = x_grid, 
                          y = y_hat,
                          mode = "lines",
                          name = "linear model"))
-                         
+
+```
+
+The assessment of the predictive accuracy, though, happens on `la_test`.
+
+```{python}
 # Add the test data
 fig.add_trace(go.Scatter(x = la_test["sqft"], 
                          y = la_test["price"],
                          mode = "markers",
-                         name = "test data"))
+                         name = "test data",
+                         marker_symbol = "circle-cross-open"))
 fig.show()
-```
 
-```{python}
 y_hat_test = slr1.predict(la_test)
 sum((y_hat_test - la_test["sqft"])**2)/(len(la_test["sqft"]) - 2)
 ```
@@ -207,9 +275,10 @@ This process is called *cross-validation* and it's goal is to help select the fi
 
 ```{python}
 from sklearn.linear_model import LinearRegression
+?LinearRegression
 ```
 
-2.  Choose model hyperparameters
+2.  Choose model hyper-parameters
 
 ```{python}
 model = LinearRegression(fit_intercept = True)
@@ -274,4 +343,3 @@ Note that there are a [wide range](https://scikit-learn.org/stable/modules/class
 from sklearn.model_selection import cross_validate
 cv_results = cross_validate(model, X, y, cv = 5, scoring = "neg_mean_squared_error")
 ```
-
