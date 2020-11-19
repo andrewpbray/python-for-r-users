@@ -1,5 +1,5 @@
 ---
-title: "Statistical Learning"
+title: "Predictive Modeling"
 subtitle: ""
 author: "Andrew Bray"
 output: html_document
@@ -93,7 +93,6 @@ fig.add_trace(go.Scatter(x = la_tiny["sqft"],
                          y = la_tiny["price"],
                          mode = "markers",
                          name = "training data"))
-fig.show()
 
 # Add the model
 x_grid = np.linspace(800, 9500) 
@@ -216,9 +215,9 @@ X = la_train["sqft"]
 X = sm.add_constant(X)
 
 # Fit the model
-slr1 = sm.OLS(y, X).fit()
-pd.DataFrame({"coef": slr1.params,
-              "p-value": slr1.pvalues})
+slr_lin = sm.OLS(y, X).fit()
+pd.DataFrame({"coef": slr_lin.params,
+              "p-value": slr_lin.pvalues})
 
 # Plot the training data
 fig = go.Figure()
@@ -230,12 +229,11 @@ fig.add_trace(go.Scatter(x = la_train["sqft"],
 # Add the fitted model
 x_grid = np.linspace(800, 9500)
 X_grid = sm.add_constant(x_grid)
-y_hat  = slr1.predict(y, X_grid)
+y_hat  = slr_lin.predict(X_grid)
 fig.add_trace(go.Scatter(x = x_grid, 
                          y = y_hat,
                          mode = "lines",
                          name = "linear model"))
-
 ```
 
 The assessment of the predictive accuracy, though, happens on `la_test`.
@@ -249,7 +247,8 @@ fig.add_trace(go.Scatter(x = la_test["sqft"],
                          marker_symbol = "circle-cross-open"))
 fig.show()
 
-y_hat_test = slr1.predict(la_test)
+X_test = sm.add_constant(la_test["sqft"])
+y_hat_test = slr_lin.predict(X_test)
 sum((y_hat_test - la_test["sqft"])**2)/(len(la_test["sqft"]) - 2)
 ```
 
@@ -320,8 +319,8 @@ model.intercept_
 To compare to the output from `statsmodels`.
 
 ```{python}
-pd.DataFrame({"coef": slr1.params,
-              "p-value": slr1.pvalues})
+pd.DataFrame({"coef": slr_lin.params,
+              "p-value": slr_lin.pvalues})
 ```
 
 5.  Predict onto new data and access accuracy
