@@ -1,0 +1,45 @@
+---
+title: "Week 13"
+subtitle: "classes and objects"
+author: "STAT 198/298 Fall 2020"
+output: html_document
+---
+
+```{r include = FALSE}
+knitr::opts_chunk$set(message = FALSE, fig.align = "center")
+library(tidyverse)
+library(reticulate)
+```
+
+
+Load in class definition.
+
+```{python}
+class car:
+  def __init__(self, make = "honda", model = "civic", 
+               year = 2007, mpg = 30):
+    self.make = make
+    self.model = model
+    self.year = year
+    self.mpg = mpg
+    
+  def greet(self, name):
+    print("Hello, I am a " + self.make.capitalize() + 
+          " " + self.model.capitalize() + " and my name is " +
+          name + ".")
+ 
+  def age(self, years):
+    self.mpg += -years / 4
+
+```
+
+### Question 1
+
+Create a new instance of `car()` that corresponds to your your favorite car.
+
+
+### Question 2
+
+Add an attribute that stores the amount of gas in the tank and add a method `drive()` that depletes the gas.
+
+
