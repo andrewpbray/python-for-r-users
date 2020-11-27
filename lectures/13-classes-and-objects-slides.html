@@ -373,7 +373,8 @@ class car:
     self.mpg = mpg
  
   def greet(self):
-    print("Hello, I am a " + self.make + " " + self.model + ".")
+    print("Hello, I am a " + self.make +
+          " " + self.model + ".")
 ```
 
 --
@@ -653,6 +654,8 @@ The primary OOP system in R is called S3 and takes a different approach.
 
 Instead of "defining a class", we build a constructor function to create the instance with its attributes.
 
+--
+
 
 ```r
 new_car &lt;- function(make = "honda") {
@@ -689,6 +692,65 @@ my_car$make
 
 ```
 ## [1] "toyota"
+```
+
+---
+
+Let's add back the same attributes into our constructor.
+
+
+```r
+new_car &lt;- function(make = "honda", model = "civic",
+                    year = 2007, mpg = 30, gas = 12) {
+  out &lt;- list(make = make,
+              model = model,
+              year = year,
+              mpg = mpg,
+              gas = gas)
+  structure(out, class = c("car", "list"))
+}
+```
+
+
+---
+# Adding methods
+
+Instead of associating the method with the object, S3 objects associate them with a *generic* version of the method. (print code at console)
+
+--
+
+
+```r
+summary
+summary.lm
+```
+
+--
+
+Note: the arguments of the method must be the exact same as the generic.
+
+---
+# Adding a summary method
+
+--
+
+
+```r
+summary.car &lt;- function(obj, ...) {
+  cat(paste0("Hello, I am a ", obj$make, " ", obj$model, "."))
+}
+```
+
+--
+
+
+```r
+my_car &lt;- new_car()
+summary(my_car)
+```
+
+```
+## Hello, I am a honda civic.
 ```
 
 
