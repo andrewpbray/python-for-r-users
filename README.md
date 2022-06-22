@@ -1,7 +1,7 @@
 # Python for R Users
 
-### STAT 198/298
-### UC Berkeley Fall 2020
+**STAT 198/298**
+**UC Berkeley Fall 2020**
 
 This repository contains all of the course materials for a short course taught aimed to introduce students adept at programming in R to the Python language.
 
