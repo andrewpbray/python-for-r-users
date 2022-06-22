@@ -611,14 +611,15 @@ knitr::include_graphics("figs/class-hierarchies.png")
 
 Remake the data analysis submitted as Lab 1 using Python.
 
-- Format: RMarkdown file, knit to pdf
+- Format: RMarkdown file that can be knitted to pdf
 - Use Python where you can, R where you can't
 - Define a new class if it'd be helpful
-- Final knitted report should be production grade
+- Final knitted report should be professional grade
   - No unnecessary printing
   - No code showing
   - Polished graphics
-
+- No office hours this week but please email me if you'd like to set up a meeting to chat about your final assignment. I'm happy to work on these with you.
+- Submit via email by noon Friday December 11th
 
 
 

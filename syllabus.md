@@ -15,11 +15,11 @@ particular strengths and weaknesses.
 
 **Materials**
 
-  - [A Whirlwind Tour of
+-   [A Whirlwind Tour of
     Python](https://www.oreilly.com/programming/free/files/a-whirlwind-tour-of-python.pdf),
     Jake VanderPlas
 
-  - [Python Data Science
+-   [Python Data Science
     Handbook](https://jakevdp.github.io/PythonDataScienceHandbook/),
     Jake VanderPlas
 
@@ -56,3 +56,4 @@ and 2/3 of the labs.
 5.  Data wrangling with Pandas
 6.  Visualization with Matplotlib and Plotly
 7.  Modeling with Scikit-Learn
+8.  Object-oriented programming in Python and R
